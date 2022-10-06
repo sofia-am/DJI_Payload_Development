@@ -1,3 +1,0 @@
-../Core/Src/main.c:5:5:main	8	static
-../Core/Src/main.c:15:6:Init_OnBoard_LEDs	32	static
-../Core/Src/main.c:23:6:Delay_ms	24	static
