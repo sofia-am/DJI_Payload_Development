@@ -1,0 +1,137 @@
+15:51:17 **** Incremental Build of configuration Debug for project 4to_intento ****
+make -j4 all 
+Building file: ../src/main.c
+Building file: ../StdPeriph_Driver/src/misc.c
+Building file: ../StdPeriph_Driver/src/stm32f4xx_adc.c
+Invoking: MCU GCC Compiler
+Building file: ../StdPeriph_Driver/src/stm32f4xx_can.c
+Invoking: MCU GCC Compiler
+Invoking: MCU GCC Compiler
+C:\Users\sofia\workspace\4to_intento\Debug
+Invoking: MCU GCC Compiler
+C:\Users\sofia\workspace\4to_intento\Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -DSTM32 -DSTM32F4 -DSTM32F411VETx -DSTM32F411E_DISCO -DDEBUG -DSTM32F411xE -DUSE_STDPERIPH_DRIVER -I"C:/Users/sofia/workspace/4to_intento/StdPeriph_Driver/inc" -I"C:/Users/sofia/workspace/4to_intento/inc" -I"C:/Users/sofia/workspace/4to_intento/CMSIS/device" -I"C:/Users/sofia/workspace/4to_intento/CMSIS/core" -O0 -g3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.c"
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -DSTM32 -DSTM32F4 -DSTM32F411VETx -DSTM32F411E_DISCO -DDEBUG -DSTM32F411xE -DUSE_STDPERIPH_DRIVER -I"C:/Users/sofia/workspace/4to_intento/StdPeriph_Driver/inc" -I"C:/Users/sofia/workspace/4to_intento/inc" -I"C:/Users/sofia/workspace/4to_intento/CMSIS/device" -I"C:/Users/sofia/workspace/4to_intento/CMSIS/core" -O0 -g3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"StdPeriph_Driver/src/misc.d" -MT"StdPeriph_Driver/src/misc.o" -o "StdPeriph_Driver/src/misc.o" "../StdPeriph_Driver/src/misc.c"
+C:\Users\sofia\workspace\4to_intento\Debug
+C:\Users\sofia\workspace\4to_intento\Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -DSTM32 -DSTM32F4 -DSTM32F411VETx -DSTM32F411E_DISCO -DDEBUG -DSTM32F411xE -DUSE_STDPERIPH_DRIVER -I"C:/Users/sofia/workspace/4to_intento/StdPeriph_Driver/inc" -I"C:/Users/sofia/workspace/4to_intento/inc" -I"C:/Users/sofia/workspace/4to_intento/CMSIS/device" -I"C:/Users/sofia/workspace/4to_intento/CMSIS/core" -O0 -g3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"StdPeriph_Driver/src/stm32f4xx_adc.d" -MT"StdPeriph_Driver/src/stm32f4xx_adc.o" -o "StdPeriph_Driver/src/stm32f4xx_adc.o" "../StdPeriph_Driver/src/stm32f4xx_adc.c"
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -DSTM32 -DSTM32F4 -DSTM32F411VETx -DSTM32F411E_DISCO -DDEBUG -DSTM32F411xE -DUSE_STDPERIPH_DRIVER -I"C:/Users/sofia/workspace/4to_intento/StdPeriph_Driver/inc" -I"C:/Users/sofia/workspace/4to_intento/inc" -I"C:/Users/sofia/workspace/4to_intento/CMSIS/device" -I"C:/Users/sofia/workspace/4to_intento/CMSIS/core" -O0 -g3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"StdPeriph_Driver/src/stm32f4xx_can.d" -MT"StdPeriph_Driver/src/stm32f4xx_can.o" -o "StdPeriph_Driver/src/stm32f4xx_can.o" "../StdPeriph_Driver/src/stm32f4xx_can.c"
+../src/main.c:19:1: error: unknown type name 'UART_HandleTypeDef'; did you mean 'USART_InitTypeDef'?
+ UART_HandleTypeDef UART_Handler; /*Create UART_HandleTypeDef struct instance */
+ ^~~~~~~~~~~~~~~~~~
+ USART_InitTypeDef
+../src/main.c: In function 'main':
+../src/main.c:24:3: warning: implicit declaration of function 'HAL_Init'; did you mean 'I2S_Init'? [-Wimplicit-function-declaration]
+   HAL_Init(); /* HAL library initialization */
+   ^~~~~~~~
+   I2S_Init
+../src/main.c:28:5: warning: implicit declaration of function 'HAL_UART_Transmit' [-Wimplicit-function-declaration]
+     HAL_UART_Transmit(&UART_Handler, (uint8_t *)Message, strlen(Message), 10);
+     ^~~~~~~~~~~~~~~~~
+../src/main.c: In function 'UART2_Configuration':
+../src/main.c:35:3: warning: implicit declaration of function '__HAL_RCC_GPIOA_CLK_ENABLE' [-Wimplicit-function-declaration]
+   __HAL_RCC_GPIOA_CLK_ENABLE(); /* Enable clock to PORTA - UART2 pins PA2 and PA3 */
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+../src/main.c:36:3: warning: implicit declaration of function '__HAL_RCC_USART2_CLK_ENABLE' [-Wimplicit-function-declaration]
+   __HAL_RCC_USART2_CLK_ENABLE(); /* Enable clock to UART2 module */
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+../src/main.c:39:21: error: 'GPIO_InitTypeDef {aka struct <anonymous>}' has no member named 'Pin'
+   UART2_GPIO_Handler.Pin = GPIO_PIN_2 | GPIO_PIN_3;
+                     ^
+../src/main.c:39:28: error: 'GPIO_PIN_2' undeclared (first use in this function); did you mean 'GPIO_Pin_2'?
+   UART2_GPIO_Handler.Pin = GPIO_PIN_2 | GPIO_PIN_3;
+                            ^~~~~~~~~~
+                            GPIO_Pin_2
+../src/main.c:39:28: note: each undeclared identifier is reported only once for each function it appears in
+../src/main.c:39:41: error: 'GPIO_PIN_3' undeclared (first use in this function); did you mean 'GPIO_PIN_2'?
+   UART2_GPIO_Handler.Pin = GPIO_PIN_2 | GPIO_PIN_3;
+                                         ^~~~~~~~~~
+                                         GPIO_PIN_2
+../src/main.c:40:21: error: 'GPIO_InitTypeDef {aka struct <anonymous>}' has no member named 'Mode'
+   UART2_GPIO_Handler.Mode = GPIO_MODE_AF_PP;
+                     ^
+../src/main.c:40:29: error: 'GPIO_MODE_AF_PP' undeclared (first use in this function); did you mean 'GPIO_OType_PP'?
+   UART2_GPIO_Handler.Mode = GPIO_MODE_AF_PP;
+                             ^~~~~~~~~~~~~~~
+                             GPIO_OType_PP
+../src/main.c:41:21: error: 'GPIO_InitTypeDef {aka struct <anonymous>}' has no member named 'Pull'
+   UART2_GPIO_Handler.Pull = GPIO_PULLUP;
+                     ^
+../src/main.c:41:29: error: 'GPIO_PULLUP' undeclared (first use in this function); did you mean 'GPIO_PuPd_UP'?
+   UART2_GPIO_Handler.Pull = GPIO_PULLUP;
+                             ^~~~~~~~~~~
+                             GPIO_PuPd_UP
+../src/main.c:42:22: error: 'GPIO_InitTypeDef {aka struct <anonymous>}' has no member named 'Speed'; did you mean 'GPIO_Speed'?
+   UART2_GPIO_Handler.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+                      ^~~~~
+                      GPIO_Speed
+../src/main.c:42:30: error: 'GPIO_SPEED_FREQ_VERY_HIGH' undeclared (first use in this function)
+   UART2_GPIO_Handler.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+                              ^~~~~~~~~~~~~~~~~~~~~~~~~
+../src/main.c:43:21: error: 'GPIO_InitTypeDef {aka struct <anonymous>}' has no member named 'Alternate'
+   UART2_GPIO_Handler.Alternate = GPIO_AF7_USART2;
+                     ^
+../src/main.c:43:34: error: 'GPIO_AF7_USART2' undeclared (first use in this function); did you mean 'GPIO_AF_USART2'?
+   UART2_GPIO_Handler.Alternate = GPIO_AF7_USART2;
+                                  ^~~~~~~~~~~~~~~
+                                  GPIO_AF_USART2
+../src/main.c:44:3: warning: implicit declaration of function 'HAL_GPIO_Init'; did you mean 'GPIO_Init'? [-Wimplicit-function-declaration]
+   HAL_GPIO_Init(GPIOA, &UART2_GPIO_Handler);
+   ^~~~~~~~~~~~~
+   GPIO_Init
+../src/main.c:46:15: error: request for member 'Instance' in something not a structure or union
+   UART_Handler.Instance = USART2;
+               ^
+../src/main.c:47:15: error: request for member 'Init' in something not a structure or union
+   UART_Handler.Init.BaudRate = 115200;
+               ^
+../src/main.c:48:15: error: request for member 'Init' in something not a structure or union
+   UART_Handler.Init.Mode = UART_MODE_TX_RX;
+               ^
+../src/main.c:48:28: error: 'UART_MODE_TX_RX' undeclared (first use in this function)
+   UART_Handler.Init.Mode = UART_MODE_TX_RX;
+                            ^~~~~~~~~~~~~~~
+../src/main.c:49:15: error: request for member 'Init' in something not a structure or union
+   UART_Handler.Init.WordLength = UART_WORDLENGTH_8B;
+               ^
+../src/main.c:49:34: error: 'UART_WORDLENGTH_8B' undeclared (first use in this function); did you mean 'UART_MODE_TX_RX'?
+   UART_Handler.Init.WordLength = UART_WORDLENGTH_8B;
+                                  ^~~~~~~~~~~~~~~~~~
+                                  UART_MODE_TX_RX
+../src/main.c:50:15: error: request for member 'Init' in something not a structure or union
+   UART_Handler.Init.StopBits = UART_STOPBITS_1;
+               ^
+../src/main.c:50:32: error: 'UART_STOPBITS_1' undeclared (first use in this function); did you mean 'IS_USART_STOPBITS'?
+   UART_Handler.Init.StopBits = UART_STOPBITS_1;
+                                ^~~~~~~~~~~~~~~
+                                IS_USART_STOPBITS
+../src/main.c:51:15: error: request for member 'Init' in something not a structure or union
+   UART_Handler.Init.OverSampling = UART_OVERSAMPLING_16;
+               ^
+../src/main.c:51:36: error: 'UART_OVERSAMPLING_16' undeclared (first use in this function); did you mean 'UART_STOPBITS_1'?
+   UART_Handler.Init.OverSampling = UART_OVERSAMPLING_16;
+                                    ^~~~~~~~~~~~~~~~~~~~
+                                    UART_STOPBITS_1
+../src/main.c:52:3: warning: implicit declaration of function 'HAL_UART_Init'; did you mean 'USART_Init'? [-Wimplicit-function-declaration]
+   HAL_UART_Init(&UART_Handler);
+   ^~~~~~~~~~~~~
+   USART_Init
+../src/main.c: In function 'SysTick_Handler':
+../src/main.c:57:4: warning: implicit declaration of function 'HAL_IncTick' [-Wimplicit-function-declaration]
+    HAL_IncTick();
+    ^~~~~~~~~~~
+../src/main.c:58:4: warning: implicit declaration of function 'HAL_SYSTICK_IRQHandler' [-Wimplicit-function-declaration]
+    HAL_SYSTICK_IRQHandler();
+    ^~~~~~~~~~~~~~~~~~~~~~
+make: *** [src/main.o] Error 1
+src/subdir.mk:24: recipe for target 'src/main.o' failed
+make: *** Waiting for unfinished jobs....
+Finished building: ../StdPeriph_Driver/src/misc.c
+ 
+Finished building: ../StdPeriph_Driver/src/stm32f4xx_adc.c
+ 
+Finished building: ../StdPeriph_Driver/src/stm32f4xx_can.c
+ 
+
+15:51:19 Build Finished (took 1s.825ms)
+

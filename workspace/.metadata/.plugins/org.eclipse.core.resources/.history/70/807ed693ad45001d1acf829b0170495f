@@ -1,0 +1,57 @@
+/**
+  ******************************************************************************
+  * @file    main.c
+  * @author  Ac6
+  * @version V1.0
+  * @date    01-December-2013
+  * @brief   Default main function.
+  ******************************************************************************
+*/
+//#include "stm32f4xx.h"
+#include "stm32f411e_discovery.h"
+#include <stm32f4xx.h>
+//#include <stm32_hal_legacy.h>
+
+void SysTick_Handler(void)
+{
+    HAL_IncTick();
+    HAL_SYSTICK_IRQHandler();
+}
+
+static UART_HandleTypeDef s_UARTHandle = UART_HandleTypeDef();
+
+void USART2_IRQHandler()
+{
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_SET);
+    HAL_UART_IRQHandler(&s_UARTHandle);
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_RESET);
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_RESET);
+}
+
+int main(void)
+{
+    HAL_Init();
+
+    // <Initialize UART and GPIO as before>
+
+    __GPIOC_CLK_ENABLE();
+    GPIO_InitStructure.Pin = GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12;
+    GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+    NVIC_EnableIRQ(USART2_IRQn);
+
+    for (;;)
+    {
+        char buffer[] = "test\r\n";
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10 | GPIO_PIN_11, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_RESET);
+        HAL_UART_Transmit_IT(&s_UARTHandle, (uint8_t *)buffer, sizeof(buffer));
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
+        HAL_Delay(2);
+    }
+}

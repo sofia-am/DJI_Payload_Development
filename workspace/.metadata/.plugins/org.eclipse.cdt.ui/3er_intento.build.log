@@ -1,0 +1,6 @@
+16:58:07 **** Incremental Build of configuration Debug for project 3er_intento ****
+make -j4 all 
+make: Nothing to be done for 'all'.
+
+16:58:09 Build Finished (took 1s.894ms)
+
