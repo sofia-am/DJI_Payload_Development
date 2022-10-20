@@ -44,3 +44,5 @@ for cycles in range(5):
 
     pycom.rgbled(orange)
     time.sleep(delay)
+    
+del log

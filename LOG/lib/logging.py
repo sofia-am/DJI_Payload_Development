@@ -1,8 +1,15 @@
+import os
 import sys
+import math
 import machine
 import us_ntp as ntp
 from network import WLAN
 from console_colors import bcolors as color
+
+FILE_PATH = "/flash/log.log"
+MAX_FILE_SIZE = math.pow(1024, 3)
+FILE_SIZE_INDEX = 6
+
 CRITICAL = 50
 ERROR = 40
 WARNING = 30
@@ -42,6 +49,7 @@ class Logger:
     level = NOTSET
     handlers = []
     record = LogRecord()
+    log_file = None
 
     def __init__(self, name):
         self.name = name
@@ -54,6 +62,11 @@ class Logger:
         if not rtc_res:
             print("Failed to connect")
             machine.idle()
+
+        self.log_file = open(FILE_PATH, "a+")
+
+    def __del__(self):
+        self.log_file.close()
 
     def _level_str(self, level):
         l = _level_dict.get(level)
@@ -86,8 +99,14 @@ class Logger:
                 for h in self.handlers:
                     h.emit(self.record)
             else:
-                print(print_color, "[", timestamp, "][", self.name, "]-[",
-                      levelname, "]-", msg, color.RESET, sep="", file=_stream)
+                log_msg = "[" + timestamp + "][" + self.name + "]-[" + \
+                    levelname + "]-" + msg
+
+                print(print_color + log_msg + color.RESET, sep="", file=_stream)
+                
+                self.shouldResetLogCursor(len(log_msg) + 1)
+                self.log_file.write(log_msg + "\n")
+                self.log_file.flush()
 
     def debug(self, msg, *args):
         self.log(color.RESET, DEBUG, msg, *args)
@@ -114,6 +133,11 @@ class Logger:
     def addHandler(self, hndlr):
         self.handlers.append(hndlr)
 
+    def shouldResetLogCursor(self, str_size):
+        file_stats = os.stat(FILE_PATH)
+
+        if file_stats[FILE_SIZE_INDEX] + str_size > MAX_FILE_SIZE:
+            self.log_file.seek(0,0)
 
 _level = INFO
 _loggers = {}
@@ -144,6 +168,7 @@ def basicConfig(level=INFO, filename=None, stream=None, format=None):
         print("logging.basicConfig: filename arg is not supported")
     if format is not None:
         print("logging.basicConfig: format arg is not supported")
+
 
 
 __version__ = '0.4'
