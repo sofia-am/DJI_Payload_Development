@@ -22,7 +22,7 @@ def connect_to_google_servers(bssid, auth, password):
         machine.idle()
 
     print(wlan.ifconfig())
-    print('WiFi connected succesfully')
+    print('WiFi connected successfully')
 
     while time_sleep < 8:
         rtc.ntp_sync("time.google.com", 360)
@@ -33,15 +33,19 @@ def connect_to_google_servers(bssid, auth, password):
             break
 
     if time_sleep >= 8:
-        print("Timeout: No se pudo conectar al servidor NTP\n")
+        print("Timeout: it couldn't connect to NTP server\n")
         return False
+
+    print('NTP connected successfully: ', rtc.now())
 
     return True
 
 
 def ddmmyyyyHHmmss(gmt):
     rtc_now = rtc.now()
+    
     date_str = '{dia:02d}-{mes:02d}-{año:04d} {hora:02d}:{min:02d}:{seg:02d}'.format(
         dia=rtc_now[2], mes=rtc_now[1], año=rtc_now[0], hora=rtc_now[3]+gmt, min=rtc_now[4], seg=rtc_now[5]
     )
+    
     return date_str

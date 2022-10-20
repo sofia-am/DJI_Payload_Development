@@ -1,4 +1,7 @@
 import sys
+import machine
+import us_ntp as ntp
+from network import WLAN
 
 CRITICAL = 50
 ERROR = 40
@@ -42,6 +45,16 @@ class Logger:
 
     def __init__(self, name):
         self.name = name
+        
+        bssid = input("Write the network bssid and press enter\n")
+        password = input("Write the network password and press enter\n")
+
+        rtc_res = ntp.connect_to_google_servers(bssid, WLAN.WPA2, password)
+
+        if not rtc_res:
+            print("Failed to connect")
+            machine.idle()
+
 
     def _level_str(self, level):
         l = _level_dict.get(level)
@@ -58,10 +71,14 @@ class Logger:
     def log(self, level, msg, *args):
         if self.isEnabledFor(level):
             levelname = self._level_str(level)
+            timestamp = ntp.ddmmyyyyHHmmss(-3)
+            
             if args:
                 msg = msg % args
             if self.handlers:
+                
                 d = self.record.__dict__
+                d["timestamp"] = timestamp
                 d["levelname"] = levelname
                 d["levelno"] = level
                 d["message"] = msg
@@ -69,7 +86,8 @@ class Logger:
                 for h in self.handlers:
                     h.emit(self.record)
             else:
-                print(levelname, ":", self.name, ":", msg, sep="", file=_stream)
+                print(timestamp, "|",levelname, ":",
+                      self.name, ":", msg, sep="", file=_stream)
 
     def debug(self, msg, *args):
         self.log(DEBUG, msg, *args)

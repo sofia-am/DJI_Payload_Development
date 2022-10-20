@@ -1,13 +1,13 @@
 import time
-from network import WLAN
+# from network import WLAN
 import pycom
 import logging
-import us_ntp
+# import us_ntp
 
 delay = 1
 
 log = logging.getLogger('log_boi')
-rtc_res = us_ntp.connect_to_google_servers('LCD', WLAN.WPA2, '1cdunc0rd0ba')
+# rtc_res = us_ntp.connect_to_google_servers('LCD', WLAN.WPA2, '1cdunc0rd0ba')
 
 red = 0x7f0000
 green = 0x007f00
@@ -23,7 +23,7 @@ pycom.heartbeat(False)
 for cycles in range(10):
     pycom.rgbled(red)
     time.sleep(delay)
-    log.info('%s toy rojo', us_ntp.ddmmyyyyHHmmss(-3))
+    log.info('Toy rojo')#us_ntp.ddmmyyyyHHmmss(-3)
 
     pycom.rgbled(green)
     time.sleep(delay)
