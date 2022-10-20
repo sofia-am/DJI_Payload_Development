@@ -2,7 +2,7 @@ import sys
 import machine
 import us_ntp as ntp
 from network import WLAN
-
+from console_colors import bcolors as color
 CRITICAL = 50
 ERROR = 40
 WARNING = 30
@@ -11,11 +11,11 @@ DEBUG = 10
 NOTSET = 0
 
 _level_dict = {
-    CRITICAL: "CRIT",
-    ERROR: "ERROR",
-    WARNING: "WARN",
-    INFO: "INFO",
-    DEBUG: "DEBUG",
+    CRITICAL: "Crit",
+    ERROR: "Error",
+    WARNING: "Warn",
+    INFO: "Info",
+    DEBUG: "Debug",
 }
 
 _stream = sys.stderr
@@ -45,7 +45,7 @@ class Logger:
 
     def __init__(self, name):
         self.name = name
-        
+
         bssid = input("Write the network bssid and press enter\n")
         password = input("Write the network password and press enter\n")
 
@@ -54,7 +54,6 @@ class Logger:
         if not rtc_res:
             print("Failed to connect")
             machine.idle()
-
 
     def _level_str(self, level):
         l = _level_dict.get(level)
@@ -68,16 +67,17 @@ class Logger:
     def isEnabledFor(self, level):
         return level >= (self.level or _level)
 
-    def log(self, level, msg, *args):
+    def log(self, print_color, level, msg, *args):
         if self.isEnabledFor(level):
             levelname = self._level_str(level)
             timestamp = ntp.ddmmyyyyHHmmss(-3)
-            
+
             if args:
                 msg = msg % args
             if self.handlers:
-                
+
                 d = self.record.__dict__
+                d["color"] = color
                 d["timestamp"] = timestamp
                 d["levelname"] = levelname
                 d["levelno"] = level
@@ -86,23 +86,23 @@ class Logger:
                 for h in self.handlers:
                     h.emit(self.record)
             else:
-                print(timestamp, "|",levelname, ":",
-                      self.name, ":", msg, sep="", file=_stream)
+                print(print_color, "[", timestamp, "][", self.name, "]-[",
+                      levelname, "]-", msg, color.RESET, sep="", file=_stream)
 
     def debug(self, msg, *args):
-        self.log(DEBUG, msg, *args)
+        self.log(color.RESET, DEBUG, msg, *args)
 
     def info(self, msg, *args):
-        self.log(INFO, msg, *args)
+        self.log(color.INFO, INFO, msg, *args)
 
     def warning(self, msg, *args):
-        self.log(WARNING, msg, *args)
+        self.log(color.WARNING, WARNING, msg, *args)
 
     def error(self, msg, *args):
-        self.log(ERROR, msg, *args)
+        self.log(color.ERROR, ERROR, msg, *args)
 
     def critical(self, msg, *args):
-        self.log(CRITICAL, msg, *args)
+        self.log(color.ERROR, CRITICAL, msg, *args)
 
     def exc(self, e, msg, *args):
         self.log(ERROR, msg, *args)
@@ -146,4 +146,4 @@ def basicConfig(level=INFO, filename=None, stream=None, format=None):
         print("logging.basicConfig: format arg is not supported")
 
 
-__version__ = '0.3'
+__version__ = '0.4'

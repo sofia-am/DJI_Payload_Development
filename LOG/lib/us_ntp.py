@@ -1,8 +1,8 @@
-from time import time
-from network import WLAN
 import utime
 import machine
-import os
+from network import WLAN
+from console_colors import bcolors as color
+
 
 rtc = machine.RTC(id=0)
 
@@ -22,7 +22,7 @@ def connect_to_google_servers(bssid, auth, password):
         machine.idle()
 
     print(wlan.ifconfig())
-    print('WiFi connected successfully')
+    print(color.INFO, 'WiFi connected successfully', color.RESET)
 
     while time_sleep < 8:
         rtc.ntp_sync("time.google.com", 360)
@@ -33,19 +33,19 @@ def connect_to_google_servers(bssid, auth, password):
             break
 
     if time_sleep >= 8:
-        print("Timeout: it couldn't connect to NTP server\n")
+        print(color.ERROR, "Timeout: it couldn't connect to NTP server\n", color.RESET)
         return False
 
-    print('NTP connected successfully: ', rtc.now())
+    print(color.INFO, 'NTP connected successfully: ', rtc.now(), color.RESET)
 
     return True
 
 
 def ddmmyyyyHHmmss(gmt):
     rtc_now = rtc.now()
-    
+
     date_str = '{dia:02d}-{mes:02d}-{año:04d} {hora:02d}:{min:02d}:{seg:02d}'.format(
         dia=rtc_now[2], mes=rtc_now[1], año=rtc_now[0], hora=rtc_now[3]+gmt, min=rtc_now[4], seg=rtc_now[5]
     )
-    
+
     return date_str
