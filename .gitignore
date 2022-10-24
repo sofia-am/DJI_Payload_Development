@@ -1,1 +1,9 @@
 ./UART/Pycom/tmp/
+*.aux
+*.pdf
+*.fdb_latexmk
+*.fls
+*.log
+*.out 
+*.synctex.gz
+*.toc
