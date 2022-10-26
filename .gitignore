@@ -1,2 +1,4 @@
 ./UART/Pycom/tmp/
 __pycache__/
+.vscode
+boot.py
