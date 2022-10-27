@@ -2,3 +2,4 @@
 __pycache__/
 .vscode
 boot.py
+merged_log.log

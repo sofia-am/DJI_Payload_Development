@@ -1,13 +1,13 @@
 import sys
 import unittest
-sys.path.insert(0, 'LOG/post_flight_logger_processor/src')
-from post_flight_processor import get_date_from_pycom_log
+sys.path.insert(0, 'log/post_flight_logger_processor/src')
+from post_flight_processor import get_info_from_dji_logs, get_date_from_pycom_log
 
 
 class PostFlightProcessorTest(unittest.TestCase):
     def test_get_date_from_pycom_log_return_true(self):
         try:
-            path = 'LOG/example_logs/log.log'
+            path = 'log/example_logs/log.log'
             pycom_log_file = open(path, encoding='utf-8')
             matches = get_date_from_pycom_log(pycom_log_file.readlines())
             dates = ['20-10-2022 19:29:47', '20-10-2022 19:31:50', '20-10-2022 19:31:50', '20-10-2022 19:31:52', '20-10-2022 19:31:59', '20-10-2022 19:31:59',
@@ -15,6 +15,13 @@ class PostFlightProcessorTest(unittest.TestCase):
             self.assertEqual(dates, matches)
         finally:
             pycom_log_file.close()
+
+    def test_get_info_from_dji_logs_return_false(self):
+        date = '20-10-2022 19:31:50'
+        path = 'log/example_logs/example_dji_logs_reduced.csv'
+        info = get_info_from_dji_logs(date, path)
+        print(info)
+        self.assertEqual(True,True)
 
 
 if __name__ == '__main__':
