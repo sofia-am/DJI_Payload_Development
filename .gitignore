@@ -1,1 +1,5 @@
 ./UART/Pycom/tmp/
+__pycache__/
+.vscode
+boot.py
+merged_log.log
