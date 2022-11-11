@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./LOG/post_flight_logger_processor/src"
+    ]
+}

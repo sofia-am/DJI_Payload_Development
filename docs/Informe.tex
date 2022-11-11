@@ -26,7 +26,7 @@
 \thispagestyle{empty}
 \newpage
 
-\pagestyle{myheadings}
+%\pagestyle{myheadings}
 \markright{}
 
 \section{Ficha de Práctica Supervisada}
@@ -114,7 +114,7 @@ La curva de aprendizaje en dichas tecnologías se documentó en Notion, una plat
 \section{Herramientas de trabajo}
 \justifying
 Para realizar las experiencias, que se describirán posteriormente en este documento, fueron necesarias algunas placas de desarrollo, las mismas se listarán en esta sección.
-\subsection*{PyCom}
+\subsection{PyCom}
 Por un lado se utilizó hardware del fabricante \textit{PyCom}, en particular, los módulos \textit{FiPy}[Fig. 4.1 y Fig. 4.2] y su placa de expansión \textit{FyPy}[Fig. 4.3 y Fig 4.4]. La utilización de estas placas fue debido a que se proyecta que las futuras payloads que lleve el drone sean estas o similares.
 
 \begin{figure}[ht]
@@ -150,7 +150,7 @@ Una lista completa con todas las funcionalidades ofrecidas por los módulos pued
 
 Ambas placas utilizan el lenguaje \href{https://github.com/micropython/micropython}{micropython} para el desarrollo, el cual es un set de funciones reducidas de los módulos originales de Python.
 
-\subsection*{SMT32F4}
+\subsection{SMT32F4}
 Esta placa se utilizó con el objetivo de realizar pruebas tratándola como una interfaz drone-payloads, el plan era consumir del SDK del drone (escrito en c) y pasarle información a la \textit{PyCom}, al igual que, en base a los datos recopilados por la payload, darle instrucciones al UAV.
 La \textit{SMT32F4} [Fig. 4.5, 4.6] es una placa que posee un procesador Cortex M4, con arquitectura ARM de 32-bit y una frecuencia de operación de 180 MHz. Nos brinda múltiples GPIO para la interacción con hardware y sensores de terceros. Si requiere indagar un poco más sobre la placa puede consultar su \href{https://drive.google.com/file/d/182H9i1qmJ2UCbynztxymEA3nfmx_eGrk/view?usp=share_link}{\textit{manual}}.
 
@@ -167,7 +167,7 @@ La \textit{SMT32F4} [Fig. 4.5, 4.6] es una placa que posee un procesador Cortex 
 \end{figure}
 
 
-\subsection*{USB to UART}
+\subsection{USB to UART}
 Este adaptador se utilizó en instancias de pruebas para poder enviar datos desde la PC a las placas, o recibir desde las placas a la PC.
 
 \begin{figure}[ht]
@@ -182,22 +182,58 @@ Este adaptador se utilizó en instancias de pruebas para poder enviar datos desd
   \end{subfigure}
 \end{figure}
 
-\subsection*{Payload SDK Devekopment Board Kit}
+\subsection{Payload SDK Devekopment Board Kit}
 La utilización de la \textit{SMT32F4} se debió a que en un primer momento no se tuvo en cuenta que el drone ya contaba con un accesorio para realizar esta tarea, la \href{https://store.dji.com/product/psdk-development-kit}{\textit{Payload SDK Devekopment Board Kit}} [Fig. 4.5, Fig. 4.6 y 4.7]
 Luego de investigaciones vimos que esto es justo lo que se precisaba, ya que nos brinda una interfaz para la conexión con el drone, y una placa de desarrollo la cual también es una \textit{SMT32} con un pocesador ARM de 32-bit, no se cuenta con más detalles de dicho chip, aún así debería cubrir todas las interacciones con el SDK de DJI.
+
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[b]{0.45\linewidth}
     \includegraphics[width=\linewidth]{images/Payload-DBK-1.jpg}
-    \caption{Fig. 4.5: kit completo}
+    \caption{Fig. 4.9: kit completo}
   \end{subfigure}
   \begin{subfigure}[b]{0.45\linewidth}
     \includegraphics[width=\linewidth]{images/Payload-DBK-2.jpg}
-    \caption{Fig. 4.6: Placa de desarrollo}
+    \caption{Fig. 4.10: Placa de desarrollo}
   \end{subfigure}
   \begin{subfigure}[b]{0.45\linewidth}
     \includegraphics[width=\linewidth]{images/Payload-DBK-3.jpg}
-    \caption{Fig 4.7: Conector de la interfaz}
+    \caption{Fig 4.11: Conector de la interfaz}
   \end{subfigure}
 \end{figure}
+
+\vspace*{200pt}
+\newpage
+\section{Desafíos abordados}
+
+\subsection{DJI SDK}
+La investigación sobre el \textit{SDK} del drone nace como respuesta a la oportu-nidad de montar payloads sobre \textit{UAV}. Tener cargas útiles sobre el drone es de una gran útilidad dado que utilizando \textit{D-RTK2} se pueden obtener datos acompañados de una alta precisión que la obtenemos a través del GPS del mismo en tiempo real.
+
+Algunas de las aplicaciones que podrían resultar de estas implementacio-nes son:
+\begin{itemize}
+  \item \textbf{Recolección de datos de multinodos}, en sistemas con multinodos que recopilan información, el drone puede ser una excelente opción para planificar rutas he ir recolectando e indicando a donde redireccionar los datos al mismo tiempo.
+  \item \textbf{Inspección de redes de alta tensión}, permite encontrar defectos en las powerlines desde una distancia segura.
+  \item \textbf{Agricultura de precisión}, ya sea para la detección de plagas, male-zas, monitorear rendimientos, intervenir en sectores específicos del cul-tivo de manera inmediata, etc.
+  \item \textbf{Minería}, para inspeccionar cañerías de gas o combustible con lasers de detección de fugas.
+  \item \textbf{Combate contra incendios}, se podría equipar con cámaras especiales con zoom óptico para identificar focos de fuego, planear estrategias y reconocer situaciones peligrosas.
+  \item \textbf{Seguridad}, se podría utilizar para patrullaje y monitoreo de zonas conflictivas o díficiles de cubrir, como por ejemplo las fronteras.
+\end{itemize}
+
+Ahora se adjuntarán los distintos módulos que existen el el SDK de payloads provisto por DJI, estos son los que abrirán las puertas a nuevas aplicaciones, los mismos se clasifican en dos grandes subsecciones, \textit{Basic Function} o \textit{Advanced Function}.
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[b]{0.45\linewidth}
+    \includegraphics[width=\linewidth]{images/basic_function.png}
+    \caption{Fig. 5.1: Basic Function}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.45\linewidth}
+    \includegraphics[width=\linewidth]{images/advanced_function.png}
+    \caption{Fig. 5.2: Advanced Function}
+  \end{subfigure}
+\end{figure}
+
+\subsection{PyCom}
+
+\subsection{UART}
 \end{document}
