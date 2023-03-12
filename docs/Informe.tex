@@ -7,6 +7,29 @@
 \usepackage{hyperref}
 \usepackage{fancyhdr}
 \usepackage{subcaption}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
 
 \title{\huge Práctica Supervisada\vspace*{5cm}}
 
@@ -36,7 +59,7 @@
 
 \textsl{N° de Matrícula:} 41.279.731
 
-\textsl{Teléfono:} 3512355718
+\textsl{Teléfono:} (+54) 351 2355718
 
 \textsl{Correo electrónico:} sofia.amallo@mi.unc.edu.ar
 \vspace*{0.5cm}
@@ -45,7 +68,7 @@
 
 \textsl{N° de Matrícula:} 41.592.940
 
-\textsl{Teléfono:} 3571604632
+\textsl{Teléfono:} (+54) 3571 604632
 
 \textsl{Correo electrónico:} juan.manuel.gil@mi.unc.edu.ar
 
@@ -90,7 +113,7 @@
 \section{Introducción}
 La Práctica Supervisada (PS) se llevó a cabo en el Laboratorio de Comunicaciones Digitales (LCD) de la Universidad Nacional de Córdoba, Córdoba, Argentina, donde se abordó el desafío de desarrollar \textit{payloads}, tam-bién conocidas como cargas útiles, con el fin de expandir las funcionalidades del drone Matrice 300 RTK de DJI.
 
-En ese contexto se investigaron distintas maneras de interactuar con dicho drone, siendo algunas el SDK (Software Development Kit) que brinda el fabricante que cumple el rol de una API (Application Programming Interface). Se investigó acerca del protocolo UART como solución al problema de la comunicación entre el drone y las distintas payloads.
+En ese contexto se investigaron distintas maneras de interactuar con dicho drone, siendo algunas, el SDK (Software Development Kit) el cual es brindado por el fabricante y cumple el rol de una API (Application Programming Interface). Se investigó acerca del protocolo UART como solución al problema de la comunicación entre el drone y las distintas payloads.
 
 Una de las partes mas enriquecedoras de nuestra experiencia en el labora-torio fue la dinámica de trabajo, ya que abordamos diferentes soluciones a medida que se presentaron nuevas problemáticas, algo propio del desarrollo con nuevas tecnologías como es nuestro caso. 
 
@@ -206,8 +229,81 @@ Luego de investigaciones vimos que esto es justo lo que se precisaba, ya que nos
 \newpage
 \section{Desafíos abordados}
 
+\subsection{Transmisión datos entre SMT32 y PyCom}
+Mientras se analizaban las distintas alternativas para interactuar entre el \textit{SDK del drone} y la payload se hicieron pruebas para que sea una placa \textit{SMT32} la que se conecte directamente al \textit{Matrice 300 RTK} mientras que sea la \textit{PyCom} la que se encargue de  realizar el trabajo útil. Para que esto funcione necesitabamos definir un protocolo de comunicación entre ambas placas, por lo que se optió por utilizar \textit{UART} como medio de transmisión de datos.
+
+\subsubsection{PyTrack: Mapeo de puertos externos}
+El módulo PyTrack posee diez \textit{External GPIO}, los cuales se pueden ver en detalle en la [Fig. 5.1.1]. Estos GPIO se pueden utilizar para distintas utilidades, en nuestro caso, para obtener un pin para transmisión y otro para recepción serial. Para poder aprovecharlos es necesario realizar un mapeo de los pines, a continuación se muestra el código que se utilizó para realizar dicho mapeo.
+
+\lstinputlisting[language=python]{../uart/Pycom/read.py}
+
+Se utiliza como ejemplo solo la lectura pero en el repositorio se puede encontrar el código para la escritura y también para lectura/escritura.
+
+\subsubsection{Validación para la conexión serial}
+
+En la figura [Fig. 5.1.2] se puede observar que se soldaron conectores a los Ext-GPIO para facilitar su conexionado.
+
+Si se quiere enviar datos basta con escribir en una terminal
+\lstset{language=Bash}
+\begin{lstlisting}
+  echo 'Hello World' > /dev/<serial-port-name>
+\end{lstlisting}
+
+Para leer se utiliza
+\begin{lstlisting}
+  cat /dev/<serial-port-name>
+\end{lstlisting}
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[b]{0.45\linewidth}
+    \includegraphics[width=\linewidth]{images/pytrack-external-gpio.png}
+    \caption{Fig. 5.1.1: PyTrack-Ext-GPIO}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.45\linewidth}
+    \includegraphics[width=\linewidth]{images/pytrack-external-gpio-2.png}
+    \caption{Fig. 5.1.2: PyTrack-Ext-GPIO}
+  \end{subfigure}
+\end{figure}
+
+\subsubsection{Carga de programas}
+
+Con esto listo, solo resta cargar los programas de prueba en ambas placas, los cuales se pueden encontrar en el repositorio
+\begin{itemize}
+\item \path{../uart/PyCom/write_data_to_smt32.py} para enviar datos desde la \textit{PyCom} a la \textit{SMT32}.
+\item \path{../uart/SMT32F4/uart_recieve/src} ahí se encuentran los archivos a compilar para la \textit{SMT32}, se recomienda abrir todo el workspace y compilar desde la herramienta.
+\end{itemize}
+
+\subsubsection{Conexionado}
+
+Por último solo queda realizar el conexionado para obtener la siguiente topología, en la cúal la \textit{PyCom} enviará datos a ser leídos por la \textit{SMT32}. 
+
+\begin{enumerate}
+  \item PC1 a STM32 [Fig. 5.1.3].
+  \item STM32 a Pycom  [Fig. 5.1.4].
+  \item Pycom a PC2 [Fig. 5.1.5].
+\end{enumerate}
+
+Entonces solo queda, desde la \textit{PC1}, enviar información a la \textit{STM32}, la cuál se la comunicará con la \textit{PyCom} quién la leerá y los resultados pordrán ser validados en la \textit{PC2}.
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[b]{0.45\linewidth}
+    \includegraphics[width=\linewidth]{images/SMT32-PyCom-1.png}
+    \caption{Fig. 5.1.3: PC1 a STM32}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.45\linewidth}
+    \includegraphics[width=\linewidth]{images/SMT32-PyCom-2.png}
+    \caption{Fig. 5.1.4: STM32 a Pycom}
+  \end{subfigure}
+  \begin{subfigure}[c]{0.45\linewidth}
+    \includegraphics[width=\linewidth]{images/SMT32-PyCom-3.png}
+    \caption{Fig. 5.1.5: Pycom a PC2}
+  \end{subfigure}
+\end{figure}
+
 \subsection{DJI SDK}
-La investigación sobre el \textit{SDK} del drone nace como respuesta a la oportu-nidad de montar payloads sobre \textit{UAV}. Tener cargas útiles sobre el drone es de una gran útilidad dado que utilizando \textit{D-RTK2} se pueden obtener datos acompañados de una alta precisión que la obtenemos a través del GPS del mismo en tiempo real.
+La investigación sobre el \textit{SDK} del drone nace como respuesta a la oportu-nidad de montar payloads sobre \textit{UAV}. Tener cargas útiles sobre el drone es de una gran útilidad dado que utilizando \href{https://www.dji.com/d-rtk-2}{\textit{D-RTK2}} se pueden obtener datos de alta precisión a través del GPS del mismo, en tiempo real.
 
 Algunas de las aplicaciones que podrían resultar de estas implementacio-nes son:
 \begin{itemize}
@@ -218,22 +314,24 @@ Algunas de las aplicaciones que podrían resultar de estas implementacio-nes son
   \item \textbf{Combate contra incendios}, se podría equipar con cámaras especiales con zoom óptico para identificar focos de fuego, planear estrategias y reconocer situaciones peligrosas.
   \item \textbf{Seguridad}, se podría utilizar para patrullaje y monitoreo de zonas conflictivas o díficiles de cubrir, como por ejemplo las fronteras.
 \end{itemize}
-
+\pagebreak 
+\subsubsection{Módulos del SDK de DJI}
 Ahora se adjuntarán los distintos módulos que existen el el SDK de payloads provisto por DJI, estos son los que abrirán las puertas a nuevas aplicaciones, los mismos se clasifican en dos grandes subsecciones, \textit{Basic Function} o \textit{Advanced Function}.
 
 \begin{figure}[ht]
   \centering
-  \begin{subfigure}[b]{0.45\linewidth}
+  \begin{subfigure}[b]{0.65\linewidth}
     \includegraphics[width=\linewidth]{images/basic_function.png}
     \caption{Fig. 5.1: Basic Function}
   \end{subfigure}
-  \begin{subfigure}[b]{0.45\linewidth}
+  \begin{subfigure}[b]{0.65\linewidth}
     \includegraphics[width=\linewidth]{images/advanced_function.png}
     \caption{Fig. 5.2: Advanced Function}
   \end{subfigure}
 \end{figure}
 
-\subsection{PyCom}
+\subsection{Post-Flight CustomLogger}
 
-\subsection{UART}
+\subsection{Análisis Robomaster}
+
 \end{document}

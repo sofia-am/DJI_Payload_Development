@@ -1,5 +1,5 @@
 from machine import UART
-uart = UART(1, 9600, pins=("P8", "P4")) # P8=Tx, P4=Rx
+uart = UART(1, 9600, pins=("P8", "P4"))  # 10-P8=Tx, 9-P4=Rx
 
 modo = 'read'
 
