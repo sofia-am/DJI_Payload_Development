@@ -314,24 +314,79 @@ Algunas de las aplicaciones que podrían resultar de estas implementacio-nes son
   \item \textbf{Combate contra incendios}, se podría equipar con cámaras especiales con zoom óptico para identificar focos de fuego, planear estrategias y reconocer situaciones peligrosas.
   \item \textbf{Seguridad}, se podría utilizar para patrullaje y monitoreo de zonas conflictivas o díficiles de cubrir, como por ejemplo las fronteras.
 \end{itemize}
-\pagebreak 
+
 \subsubsection{Módulos del SDK de DJI}
 Ahora se adjuntarán los distintos módulos que existen el el SDK de payloads provisto por DJI, estos son los que abrirán las puertas a nuevas aplicaciones, los mismos se clasifican en dos grandes subsecciones, \textit{Basic Function} o \textit{Advanced Function}.
 
 \begin{figure}[ht]
   \centering
-  \begin{subfigure}[b]{0.65\linewidth}
+  \begin{subfigure}[a]{1\linewidth}
     \includegraphics[width=\linewidth]{images/basic_function.png}
-    \caption{Fig. 5.1: Basic Function}
+    \caption{Fig. 5.2.1: Basic Function}
   \end{subfigure}
-  \begin{subfigure}[b]{0.65\linewidth}
+  \begin{subfigure}[b]{1\linewidth}
     \includegraphics[width=\linewidth]{images/advanced_function.png}
-    \caption{Fig. 5.2: Advanced Function}
+    \caption{Fig. 5.2.1: Advanced Function}
   \end{subfigure}
 \end{figure}
 
-\subsection{Post-Flight CustomLogger}
+\newpage
+\subsection{PyCom-CustomLogger}
+Dado que el logger proporcionado por la librería de micropython es bastante limitado surgió la necesidad de implementar un logger genérico que nos permita visualizar la información obtenida por el drone de la mejor manera posible. Esto no es algo menor, ya que varias de las potenciales aplicaciones que tine nuestro \textit{UAV } consiste en la obtención y relevamiento de datos.
 
+\subsubsection{Conexión a internet y servidor NTP}
+Para la construcción del \textit{CustomLogger} lo primero que debimos implementar fue un módulo para el soporte del protocolo /href{https://es.wikipedia.org/wiki/Network_Time_Protocol}{\textit{NTP}} ya que es fundamental tener la hora en la que suceden los eventos que se quieren registrar. Para lo cual se creo un \href{https://github.com/sofia-am/DJI_Payload_Development/blob/main/log/micropython/lib/us_ntp.py}{módulo en python} que primero se conecta a internet, para luego poder sincronizarse utilizando el servidor \textit{NTP} de google.
+
+\subsection{Logger}
+Para realizar el logger nos basamos principalmente en el módulo que ya existía para micropython, luego le fuimos realizando las modificaciones pertinentes, de esta manera cada vez que se quiere registrar un evento se debe llamar a la función \textit{log} de la siguiente manera: \textbf{Logger.info("Mensaje a registrar")}, los tipos de logs soportados son:
+\begin{itemize}
+  \item debug (color gris)
+  \item info (color verde)
+  \item warning (color amarillo)
+  \item error (color rojo)
+  \item critical (color rojo)
+  \item exception (color rojo)
+\end{itemize}
+El log es circular, con un tamaño máximo por defecto de 1Gb (parametrizable), es decir, a partir del Gb de información comienza a sobreescribirse.
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[a]{1\linewidth}
+    \includegraphics[width=\linewidth]{images/PyCom-Logger.png}
+    \caption{Fig. 5.3.1: CustomLogger}
+  \end{subfigure}
+\end{figure}
+
+\newpage
+\subsection{Post-Flight Processor}
+Mientras se esperaba por la llegada de nuevos componentes, se decidió realizar una prueba de concepto para la implementación de un \textit{Post-Flight Processor}, un script que permita mergear los datos obtenidos (post vuelo) por el drone, con los que se obtengan de los sensores externos de nuestra payload.
+
+\subsubsection{DJI Logs}
+Los logs post vuelo de DJI vienen encriptados, por lo que lo primero que se debe hacer es desencriptarlos, para esto se utiliza \href{https://www.phantomhelp.com/logviewer/upload/}{\textit{PhantomHelpLogViewer}}, simplemente se siguen los pasos para subir el archivo obtenido del comando del drone, y una vez procesado descargar el \textit{.csv} obtenido.
+De este archivo la información que nos interesaría obtener a priori es 
+\begin{itemize}
+  \item Date
+  \item Lat
+  \item Lon
+  \item Height
+  \item Altitude
+\end{itemize}
+
+\subsubsection{CSV Handler}
+El primer paso para trabajar con los logs obtenidos del drone fue crear un handler, que nos permita leer el archivo \textit{.csv}, obtener los datos de interés, con ellos crear un \textit{DataFrame} apoyandonos con \href{https://pandas.pydata.org/}{\textit{Pandas}}.
+Dadas las particularidades de como se guardan las fechas en los logs, y la necesidad de que sean idénticas a las que obtenemos con nuestro \textit{CustomLogger} en la \textit{PyCom}, se necesitaron múltiples funciones auxiliares para el manejo de strings, la mayoría se resuelve con programación funcional (lambdas, maps, etc), además se implementaron test unitarios para asegurarnos del correcto funcionamiento de las mismas.
+
+Se puede consultar el código para este módulo en \href{https://github.com/sofia-am/DJI_Payload_Development/blob/main/log/post_flight_logger_processor/src/csv_handler.py}{\textit{csv_handler.py}}.
+
+\subsubsection{Implementación del procesador}
+El funcionamiento conceptualmente no es demasiado complejo, se trata de obtener todas las fechas del archivo \textit{.log} de la payload, esto se consigue utilizando una RegEx, luego con esos datos como input consultamos a el \textit{DataFrame} que obtuvimos de los logs de \textit{DJI} obteniendo así la información de ese instante, finalmente se escribe un nuevo log con los resultados [Fig 5.3.2].
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[a]{1\linewidth}
+    \includegraphics[width=\linewidth]{images/post-flight-processor.png}
+    \caption{Fig. 5.3.1: PostFlight-Processor}
+  \end{subfigure}
+\end{figure}
 \subsection{Análisis Robomaster}
-
 \end{document}
