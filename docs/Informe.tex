@@ -235,6 +235,8 @@ Mientras se analizaban las distintas alternativas para interactuar entre el \tex
 \subsubsection{Protocolo UART}
 UART significa universal asynchronous receiver/transmitter y define un protocolo, o una serie de reglas, para intercambiar datos de manera serial entre dos dispositivos. Este protocolo es muy simple y utiliza solamente dos cables entre el transmisor y el receptor para enviar y recibir en ambas direcciones. Ambos terminales deben tener una conexión a tierra. 
 
+Una de las grandes ventajas del UART es que es asíncrono: el transmisor y el receptor no comparten una señal de reloj común. Aunque esto simplifica enormemente el protocolo, pone ciertos requisitos al transmisor y al receptor. Dado que no comparten un reloj, ambos terminales deben transmitir a la misma velocidad preestablecida para que tengan la misma sincronización de bits. Las velocidades de baudios del UART más comunes que se utilizan en estos días son 4800, 9600, 19.2K, 57.6K y 115.2K, en nuestro caso se usó 9600. Además de tener la misma velocidad en baudios, ambos lados de una conexión UART también deben utilizar los mismos parámetros y estructura de trama. \cite{uart}
+
 La comunicación UART puede ser simplex(los datos son enviados solo en una dirección), half-duplex(los datos pueden ser enviados en ambas direcciones pero no al mismo tiempo) o full-duplex(los datos pueden ser enviados en ambas direcciones al mismo tiempo).
 
 \subsubsection{Programacion del modulo UART de la SMT32F4}
@@ -441,4 +443,11 @@ El funcionamiento conceptualmente no es demasiado complejo, se trata de obtener 
 \end{figure}
 
 \subsection{Análisis Robomaster}
+
+\newpage
+\begin{thebibliography}{9}
+\bibitem{uart} \url{https://www.rohde-schwarz.com/lat/productos/prueba-y-medicion/essentials-test-equipment/digital-oscilloscopes/entendiendo-el-uart_254524.html} 
+
+
+\end{thebibliography}
 \end{document}
