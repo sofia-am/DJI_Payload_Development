@@ -232,6 +232,59 @@ Luego de investigaciones vimos que esto es justo lo que se precisaba, ya que nos
 \subsection{Transmisión datos entre SMT32 y PyCom}
 Mientras se analizaban las distintas alternativas para interactuar entre el \textit{SDK del drone} y la payload se hicieron pruebas para que sea una placa \textit{SMT32} la que se conecte directamente al \textit{Matrice 300 RTK} mientras que sea la \textit{PyCom} la que se encargue de  realizar el trabajo útil. Para que esto funcione necesitabamos definir un protocolo de comunicación entre ambas placas, por lo que se optió por utilizar \textit{UART} como medio de transmisión de datos.
 
+\subsubsection{Protocolo UART}
+UART significa universal asynchronous receiver/transmitter y define un protocolo, o una serie de reglas, para intercambiar datos de manera serial entre dos dispositivos. Este protocolo es muy simple y utiliza solamente dos cables entre el transmisor y el receptor para enviar y recibir en ambas direcciones. Ambos terminales deben tener una conexión a tierra. 
+
+La comunicación UART puede ser simplex(los datos son enviados solo en una dirección), half-duplex(los datos pueden ser enviados en ambas direcciones pero no al mismo tiempo) o full-duplex(los datos pueden ser enviados en ambas direcciones al mismo tiempo).
+
+\subsubsection{Programacion del modulo UART de la SMT32F4}
+Para poder utilizar el modulo UART de la \textit{SMT32F4} es necesario realizar una configuración previa. Se utilizó la librería \texttt{UART HAL} que nos brinda el fabricante de la placa. 
+
+El modulo nos permite realizar la comunicación de manera asíncrona o síncrona. En nuestro caso se optó por hacerlo de manera asíncrona. Además, se utilizó el método de polling, o bloqueante, para evitar el uso de interrupciones. 
+
+La librería \texttt{UART HAL} posee una estructura llamada \texttt{UART\_InitTypeDef} que inicializa los parámetros del módulo.
+
+\begin{lstlisting}[language=C]
+  typedef struct
+{
+  uint32_t BaudRate; /* Configura el baud_rate del modulo. */
+
+  uint32_t WordLength; /* Especifica la cantidad de bits recibidos o transmitidos en un frame. */
+
+  uint32_t StopBits; /* Especifica la cantidad de bits de stop. */
+
+  uint32_t Parity; /* Indica la paridad */
+
+  uint32_t Mode; /* Modo recepcion o transmision */
+
+  uint32_t HwFlowCtl;  /* Indica si se utiliza el control de flujo hardware */
+
+  uint32_t OverSampling; /* Indica si se utiliza oversampling */
+} UART_InitTypeDef;
+
+\end{lstlisting}
+
+Otra estructura importante que se usó para configurar el modulo es la \texttt{UART\_HandleTypeDef} que se encarga de configurar otros parámetros como los códigos de error, los puteros a los buffers de datos, el tamaño de los mismos, etc.
+
+
+Para inicializar el modulo se debe llamar a la función \texttt{HAL\_UART\_Init} y pasarle como parámetro la estructura \texttt{UART\_HandleTypeDef}. 
+\\\\
+\lstinline|HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)|
+\\\\
+Para la transmisión se utiliza la función transmit:
+\\\\
+\lstinline|HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)|
+\\\\
+Donde el primer parámetro es un puntero a una estructura \texttt{UART\_HandleTypeDef} que contiene información sobre la configuración del módulo, el segundo parámetro es un puntero a un buffer de datos que se desea transmitir, el tercer parámetro es la cantidad de datos (u8 o u16) a transmitir y el cuarto parámetro es el tiempo de espera para reintentar el envio. Esta función retorna un valor de tipo \texttt{HAL\_StatusTypeDef} que es un enum que contiene el estado( \texttt{HAL\_OK, HAL\_ERROR, HAL\_BUSY o HAL\_TIMEOUT}).
+
+Para la recepción se utiliza la función receive:
+\\\\
+\lstinline|HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)|
+\\\\
+Muchos de los parámetros son los mismos que los mencionados anteriormente, con la diferencia que el segundo parámetro es un puntero a un buffer donde se almacenarán los datos recibidos.
+
+Fue importante prestar atención a utilizar los pines correspondientes al módulo UART configurado, que en nuestro caso fue el \texttt{UART2}, cuyos pines son \texttt{PA2} y \texttt{PA3}.
+
 \subsubsection{PyTrack: Mapeo de puertos externos}
 El módulo PyTrack posee diez \textit{External GPIO}, los cuales se pueden ver en detalle en la [Fig. 5.1.1]. Estos GPIO se pueden utilizar para distintas utilidades, en nuestro caso, para obtener un pin para transmisión y otro para recepción serial. Para poder aprovecharlos es necesario realizar un mapeo de los pines, a continuación se muestra el código que se utilizó para realizar dicho mapeo.
 
