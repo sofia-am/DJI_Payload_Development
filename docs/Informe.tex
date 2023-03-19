@@ -9,6 +9,7 @@
 \usepackage{subcaption}
 \usepackage{listings}
 \usepackage{color}
+\usepackage[section]{placeins}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -108,16 +109,14 @@
 
 \justifying
 \section{Resumen}
-\setlength\parindent{24pt}
-\newpage
-\section{Introducción}
-La Práctica Supervisada (PS) se llevó a cabo en el Laboratorio de Comunicaciones Digitales (LCD) de la Universidad Nacional de Córdoba, Córdoba, Argentina, donde se abordó el desafío de desarrollar \textit{payloads}, tam-bién conocidas como cargas útiles, con el fin de expandir las funcionalidades del drone Matrice 300 RTK de DJI.
+La Práctica Supervisada (PS) se llevó a cabo en el Laboratorio de Comunicaciones Digitales (LCD) de la Universidad Nacional de Córdoba, Córdoba, Argentina, donde se abordó el desafío de desarrollar \textit{payloads}, también conocidas como cargas útiles, con el fin de expandir las funcionalidades del drone Matrice 300 RTK de DJI.
 
 En ese contexto se investigaron distintas maneras de interactuar con dicho drone, siendo algunas, el SDK (Software Development Kit) el cual es brindado por el fabricante y cumple el rol de una API (Application Programming Interface). Se investigó acerca del protocolo UART como solución al problema de la comunicación entre el drone y las distintas payloads.
 
-Una de las partes mas enriquecedoras de nuestra experiencia en el labora-torio fue la dinámica de trabajo, ya que abordamos diferentes soluciones a medida que se presentaron nuevas problemáticas, algo propio del desarrollo con nuevas tecnologías como es nuestro caso. 
+Una de las partes mas enriquecedoras de nuestra experiencia en el laboratorio fue la dinámica de trabajo, ya que abordamos diferentes soluciones a medida que se presentaron nuevas problemáticas, algo propio del desarrollo con nuevas tecnologías como es nuestro caso. 
 
 La curva de aprendizaje en dichas tecnologías se documentó en Notion, una plataforma de sofware orientada a la toma de notas, lo cual nos permitirá confeccionar de una manera concisa una llamada ``hoja de ruta"  que quede a disposición de otros estudiantes que transiten por el LCD, con el objetivo de brindarle alguna retribución a la institución que nos brindó herramientas de trabajo, acceso a equipos, placas e insumos para el desarrollo de nuestro trabajo y sobre todo un espacio de aprendizaje junto a docentes y compañeros. Sin dudas nuestro paso por el Laboratorio de Comunicaciones Digitales se constituyó en una de las experiencias fundamentales de nuestra formación en el campo profesional.
+
 
 \vspace{1.5cm}
 \begin{tabular}{p{5.5cm}cp{5.5cm}}
@@ -132,6 +131,17 @@ La curva de aprendizaje en dichas tecnologías se documentó en Notion, una plat
   \centering Supervisor   \\ Dr. Ing. Finochietto, Jorge M. && \centering Tutor \\ Dr. Ing. Mendoza, Horacio A.
 \end{tabular}
 
+\setlength\parindent{24pt}
+\newpage
+\section{Introducción}
+
+Los drones se han convertido en una herramienta valiosa para diversas aplicaciones, desde la vigilancia y la inspección hasta el mapeo y la entrega de paquetes. El drone 300 RTK es uno de los drones comerciales más avanzados del mercado, capaz de volar en condiciones extremas y de realizar tareas precisas y complejas gracias a su tecnología de posicionamiento y navegación de alta precisión. Sin embargo, la verdadera versatilidad del drone 300 RTK radica en su capacidad de cargar diferentes tipos de cargas útiles, lo que lo convierte en una herramienta aún más poderosa y adaptable a diversas necesidades y requerimientos.
+
+Para el desarrollo de estas cargas utiles, se utilizaron placas de desarrollo de la empresa PyCom. Las placas Pycom son un tipo de placa de desarrollo de hardware que están diseñadas específicamente para la creación de proyectos de Internet de las cosas (IoT). Las mismas cuentan con varios componentes integrados, incluyendo un microcontrolador, una antena de radio, un módulo Wi-Fi, Bluetooth y otros sensores, lo que las hace muy versátiles para muchos proyectos de IoT. Además, están diseñadas para ser programadas y controladas con lenguajes de programación populares como Python, lo que facilita la creación de aplicaciones y proyectos para muchos desarrolladores. Consideramos que dichas funcionalidades nos brindan un panorama muy amplio de posibilidades para el desarrollo de las cargas útiles.
+
+Por otro lado, DJI, el fabricante del drone, ofrece un SDK (Software Development Kit) para sus drones Matrice 300 RTK, que permite a los desarrolladores crear aplicaciones personalizadas para controlar y gestionar los drones de manera más eficiente y efectiva. El mismo proporciona una serie de herramientas de desarrollo, como una API (Application Programming Interface) completa, que permite a los desarrolladores interactuar con los componentes del drone, como la cámara, los sensores, los motores y los controladores de vuelo. También proporciona acceso a la información del estado del drone, como la ubicación y la velocidad, lo que permite a los desarrolladores crear aplicaciones de seguimiento y monitoreo. Además, la API permite a los desarrolladores integrar funciones personalizadas, como la planificación de misiones automatizadas, la detección de obstáculos y la captura de datos en tiempo real.
+
+Nuestro objetivo fue investigar acerca de toda esta tecnología, y realizar una primera aproximación al desarrollo de cargas útiles para el drone con el fin de expandir sus funcionalidades y aplicaciones.
 
 \newpage
 \section{Herramientas de trabajo}
@@ -169,13 +179,13 @@ Las \textit{PyCom} pueden trabajar con distintos módulos fábricados por tercer
 
 En cuanto a procesamiento cuenta con una \textit{ESP32 SoC} lo que implica un microprocesador Xtensa, con arquitectura ARM de 32-bits; dual-core, con una frecuencia de trabajo de 240MHz.
 
-Una lista completa con todas las funcionalidades ofrecidas por los módulos puede ser consultada en el \href{https://docs.pycom.io/gitbook/assets/specsheets/Pycom_002_Specsheets_FiPy_v2.pdf}{manual de usuario de FiPy} y/o el \href{https://pycom.io/product/pytrack-2-0-x/}{manual de usuario de PyTrack}.
+Una lista completa con todas las funcionalidades ofrecidas por los módulos puede ser consultada en el \href{https://docs.pycom.io/gitbook/assets/specsheets/Pycom_002_Specsheets_FiPy_v2.pdf}{manual de usuario de FiPy} \cite{fipy} y/o el \href{https://pycom.io/product/pytrack-2-0-x/}{manual de usuario de PyTrack} \cite{pytrack}.
 
-Ambas placas utilizan el lenguaje \href{https://github.com/micropython/micropython}{micropython} para el desarrollo, el cual es un set de funciones reducidas de los módulos originales de Python.
+Ambas placas utilizan el lenguaje \href{https://github.com/micropython/micropython}{micropython} \cite{micropython} para el desarrollo, el cual es un set de funciones reducidas de los módulos originales de Python.
 
 \subsection{SMT32F4}
 Esta placa se utilizó con el objetivo de realizar pruebas tratándola como una interfaz drone-payloads, el plan era consumir del SDK del drone (escrito en c) y pasarle información a la \textit{PyCom}, al igual que, en base a los datos recopilados por la payload, darle instrucciones al UAV.
-La \textit{SMT32F4} [Fig. 4.5, 4.6] es una placa que posee un procesador Cortex M4, con arquitectura ARM de 32-bit y una frecuencia de operación de 180 MHz. Nos brinda múltiples GPIO para la interacción con hardware y sensores de terceros. Si requiere indagar un poco más sobre la placa puede consultar su \href{https://drive.google.com/file/d/182H9i1qmJ2UCbynztxymEA3nfmx_eGrk/view?usp=share_link}{\textit{manual}}.
+La \textit{SMT32F4} [Fig. 4.5, 4.6] es una placa que posee un procesador Cortex M4, con arquitectura ARM de 32-bit y una frecuencia de operación de 180 MHz. Nos brinda múltiples GPIO para la interacción con hardware y sensores de terceros. Si requiere indagar un poco más sobre la placa puede consultar su \href{https://drive.google.com/file/d/182H9i1qmJ2UCbynztxymEA3nfmx_eGrk/view?usp=share_link}{\textit{manual}} \cite{smt}.
 
 \begin{figure}[ht]
   \centering
@@ -206,7 +216,7 @@ Este adaptador se utilizó en instancias de pruebas para poder enviar datos desd
 \end{figure}
 
 \subsection{Payload SDK Devekopment Board Kit}
-La utilización de la \textit{SMT32F4} se debió a que en un primer momento no se tuvo en cuenta que el drone ya contaba con un accesorio para realizar esta tarea, la \href{https://store.dji.com/product/psdk-development-kit}{\textit{Payload SDK Devekopment Board Kit}} [Fig. 4.5, Fig. 4.6 y 4.7]
+La utilización de la \textit{SMT32F4} se debió a que en un primer momento no se tuvo en cuenta que el drone ya contaba con un accesorio para realizar esta tarea, {\textit{Payload SDK Devekopment Board Kit}} \cite{djiexp} [Fig. 4.5, Fig. 4.6 y 4.7]
 Luego de investigaciones vimos que esto es justo lo que se precisaba, ya que nos brinda una interfaz para la conexión con el drone, y una placa de desarrollo la cual también es una \textit{SMT32} con un pocesador ARM de 32-bit, no se cuenta con más detalles de dicho chip, aún así debería cubrir todas las interacciones con el SDK de DJI.
 
 \begin{figure}[ht]
@@ -288,7 +298,7 @@ Muchos de los parámetros son los mismos que los mencionados anteriormente, con 
 Fue importante prestar atención a utilizar los pines correspondientes al módulo UART configurado, que en nuestro caso fue el \texttt{UART2}, cuyos pines son \texttt{PA2} y \texttt{PA3}.
 
 \subsubsection{PyTrack: Mapeo de puertos externos}
-El módulo PyTrack posee diez \textit{External GPIO}, los cuales se pueden ver en detalle en la [Fig. 5.1.1]. Estos GPIO se pueden utilizar para distintas utilidades, en nuestro caso, para obtener un pin para transmisión y otro para recepción serial. Para poder aprovecharlos es necesario realizar un mapeo de los pines, a continuación se muestra el código que se utilizó para realizar dicho mapeo.
+El módulo PyTrack es un denominado \textit{expansion shield}, cuyo objetivo es ampliar las funcionalidades de la placa Pycom. Posee GPS, acelerómetro y diez \textit{External GPIO} adicionales, los cuales se pueden ver en detalle en la [Fig. 5.1.1]. Estos GPIO se pueden utilizar para distintas utilidades, en nuestro caso, para obtener un pin para transmisión y otro para recepción serial. Para poder aprovecharlos es necesario realizar un mapeo de los pines, a continuación se muestra el código que se utilizó para realizar dicho mapeo.
 
 \lstinputlisting[language=python]{../uart/Pycom/read.py}
 
@@ -356,9 +366,9 @@ Entonces solo queda, desde la \textit{PC1}, enviar información a la \textit{STM
     \caption{Fig. 5.1.5: Pycom a PC2}
   \end{subfigure}
 \end{figure}
-
+\FloatBarrier
 \subsection{DJI SDK}
-La investigación sobre el \textit{SDK} del drone nace como respuesta a la oportunidad de montar payloads sobre \textit{UAV}. Tener cargas útiles sobre el drone es de una gran útilidad dado que utilizando \href{https://www.dji.com/d-rtk-2}{\textit{D-RTK2}} se pueden obtener datos de alta precisión a través del GPS del mismo, en tiempo real.
+La investigación sobre el \textit{SDK} del drone nace como respuesta a la oportunidad de montar payloads sobre \textit{UAV}. Tener cargas útiles sobre el drone es de una gran útilidad dado que utilizando \href{https://www.dji.com/d-rtk-2}{\textit{D-RTK2}} \cite{rtk} se pueden obtener datos de alta precisión a través del GPS del mismo, en tiempo real.
 
 Algunas de las aplicaciones que podrían resultar de estas implementacio-nes son:
 \begin{itemize}
@@ -373,23 +383,23 @@ Algunas de las aplicaciones que podrían resultar de estas implementacio-nes son
 \subsubsection{Módulos del SDK de DJI}
 Ahora se adjuntarán los distintos módulos que existen el el SDK de payloads provisto por DJI, estos son los que abrirán las puertas a nuevas aplicaciones, los mismos se clasifican en dos grandes subsecciones, \textit{Basic Function} o \textit{Advanced Function}.
 
-\begin{figure}[ht]
-  \centering
-  \begin{subfigure}[a]{1\linewidth}
-    \includegraphics[width=\linewidth]{images/basic_function.png}
-    \caption{Fig. 5.2.1: Basic Functions}
-  \end{subfigure}
-  \begin{subfigure}[b]{1\linewidth}
-    \includegraphics[width=\linewidth]{images/advanced_function.png}
-    \caption{Fig. 5.2.1: Advanced Functions}
-  \end{subfigure}
+\begin{figure}
+\centering
+  \includegraphics[width=\linewidth]{images/basic_function.png}
+  \caption{Fig. 5.2.1: Basic Functions}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{images/advanced_function.png}
+  \caption{Fig. 5.2.1: Advanced Functions}
 \end{figure}
 
+\FloatBarrier
 \subsection{PyCom-CustomLogger}
 Dado que el logger proporcionado por la librería de micropython es bastante limitado surgió la necesidad de implementar un logger genérico que nos permita visualizar la información obtenida por el drone de la mejor manera posible. Esto no es algo menor, ya que varias de las potenciales aplicaciones que tine nuestro \textit{UAV} consiste en la obtención y relevamiento de datos.
 
 \subsubsection{Conexión a internet y servidor NTP}
-Para la construcción del \textit{CustomLogger} lo primero que debimos implementar fue un módulo para el soporte del protocolo \href{https://es.wikipedia.org/wiki/Network_Time_Protocol}{\textit{NTP}} ya que es fundamental tener la hora en la que suceden los eventos que se quieren registrar. Para lo cual se creo un \href{https://github.com/sofia-am/DJI_Payload_Development/blob/main/log/micropython/lib/us_ntp.py}{módulo en python} que primero se conecta a internet, para luego poder sincronizarse utilizando el servidor \textit{NTP} de google.
+Para la construcción del \textit{CustomLogger} lo primero que debimos implementar fue un módulo para el soporte del protocolo \href{https://es.wikipedia.org/wiki/Network_Time_Protocol}{\textit{NTP}} \cite{ntp} ya que es fundamental tener la hora en la que suceden los eventos que se quieren registrar. Para lo cual se creo un \href{https://github.com/sofia-am/DJI_Payload_Development/blob/main/log/micropython/lib/us_ntp.py}{módulo en python} \cite{repo} que primero se conecta a internet, para luego poder sincronizarse utilizando el servidor \textit{NTP} de google.
 
 \subsection{Logger}
 Para realizar el logger nos basamos principalmente en el módulo que ya existía para micropython, luego le fuimos realizando las modificaciones pertinentes, de esta manera cada vez que se quiere registrar un evento se debe llamar a la función \textit{log} de la siguiente manera: \textbf{Logger.info("Mensaje a registrar")}, los tipos de logs soportados son:
@@ -403,19 +413,18 @@ Para realizar el logger nos basamos principalmente en el módulo que ya existía
 \end{itemize}
 El log es circular, con un tamaño máximo por defecto de 1Gb (parametrizable), es decir, a partir del Gb de información comienza a sobreescribirse.
 
-\begin{figure}[ht]
-  \centering
-  \begin{subfigure}[a]{1\linewidth}
-    \includegraphics[width=\linewidth]{images/PyCom-Logger.png}
-    \caption{Fig. 5.4.1: CustomLogger}
-  \end{subfigure}
+\begin{figure}
+  \begin{center}
+      \includegraphics[scale=0.5]{images/PyCom-Logger.png}
+      \caption{Fig. 5.4.1: CustomLogger}
+  \end{center}  
 \end{figure}
 
 \subsection{Post-Flight Processor}
 Mientras se esperaba por la llegada de nuevos componentes, se decidió realizar una prueba de concepto para la implementación de un \textit{Post-Flight Processor}, un script que permita mergear los datos obtenidos (post vuelo) por el drone, con los que se obtengan de los sensores externos de nuestra payload.
 
 \subsubsection{DJI Logs}
-Los logs post vuelo de DJI vienen encriptados, por lo que lo primero que se debe hacer es desencriptarlos, para esto se utiliza \href{https://www.phantomhelp.com/logviewer/upload/}{\textit{PhantomHelpLogViewer}}, simplemente se siguen los pasos para subir el archivo obtenido del comando del drone, y una vez procesado descargar el \textit{.csv} obtenido.
+Los logs post vuelo de DJI vienen encriptados, por lo que lo primero que se debe hacer es desencriptarlos, para esto se utiliza \href{https://www.phantomhelp.com/logviewer/upload/}{\textit{PhantomHelpLogViewer}} \cite{phantomhelp}, simplemente se siguen los pasos para subir el archivo obtenido del comando del drone, y una vez procesado descargar el \textit{.csv} obtenido.
 De este archivo la información que nos interesaría obtener a priori es 
 \begin{itemize}
   \item Date
@@ -426,10 +435,10 @@ De este archivo la información que nos interesaría obtener a priori es
 \end{itemize}
 
 \subsubsection{CSV Handler}
-El primer paso para trabajar con los logs obtenidos del drone fue crear un handler, que nos permita leer el archivo \textit{.csv}, obtener los datos de interés, con ellos crear un \textit{DataFrame} apoyandonos con \href{https://pandas.pydata.org/}{\textit{Pandas}}.
+El primer paso para trabajar con los logs obtenidos del drone fue crear un handler, que nos permita leer el archivo \textit{.csv}, obtener los datos de interés, con ellos crear un \textit{DataFrame} apoyandonos con \href{https://pandas.pydata.org/}{\textit{Pandas}} \cite{pydata}.
 Dadas las particularidades de como se guardan las fechas en los logs, y la necesidad de que sean idénticas a las que obtenemos con nuestro \textit{CustomLogger} en la \textit{PyCom}, se necesitaron múltiples funciones auxiliares para el manejo de strings, la mayoría se resuelve con programación funcional (lambdas, maps, etc), además se implementaron test unitarios para asegurarnos del correcto funcionamiento de las mismas.
 
-Se puede consultar el código para este módulo en \href{https://github.com/sofia-am/DJI\_Payload\_Development/blob/main/log/post\_flight\_logger\_processor/src/csv\_handler.py}{\textit{csv\_handler.py}}.
+Se puede consultar el código para este módulo en \href{https://github.com/sofia-am/DJI\_Payload\_Development/blob/main/log/post\_flight\_logger\_processor/src/csv\_handler.py}{\textit{csv\_handler.py}} \cite{repo2}.
 
 \subsubsection{Implementación del procesador}
 El funcionamiento conceptualmente no es demasiado complejo, se trata de obtener todas las fechas del archivo \textit{.log} de la payload, esto se consigue utilizando una RegEx, luego con esos datos como input consultamos a el \textit{DataFrame} que obtuvimos de los logs de \textit{DJI} obteniendo así la información de ese instante, finalmente se escribe un nuevo log con los resultados [Fig 5.5.2].
@@ -442,12 +451,21 @@ El funcionamiento conceptualmente no es demasiado complejo, se trata de obtener 
   \end{subfigure}
 \end{figure}
 
-\subsection{Análisis Robomaster}
-
-\newpage
+\clearpage
+\addcontentsline{toc}{section}{Referencias}
 \begin{thebibliography}{9}
+\bibitem{fipy} \url{https://docs.pycom.io/gitbook/assets/specsheets/Pycom_002_Specsheets_FiPy_v2.pdf}
+\bibitem{pytrack} \url{https://pycom.io/product/pytrack-2-0-x/} 
+\bibitem{micropython} \url{https://github.com/micropython/micropython}
+\bibitem{smt} \url{https://drive.google.com/file/d/182H9i1qmJ2UCbynztxymEA3nfmx_eGrk/view?usp=share_link}
+\bibitem{djiexp} \url{https://developer.dji.com/es/flight-controller/advanced-flight-control/mission-protocol.html}
 \bibitem{uart} \url{https://www.rohde-schwarz.com/lat/productos/prueba-y-medicion/essentials-test-equipment/digital-oscilloscopes/entendiendo-el-uart_254524.html} 
-
+\bibitem{rtk} \url{https://www.dji.com/d-rtk-2}
+\bibitem{ntp} \url{https://es.wikipedia.org/wiki/Network_Time_Protocol}
+\bibitem{repo} \url{https://github.com/sofia-am/DJI_Payload_Development/blob/main/log/micropython/lib/us_ntp.py}
+\bibitem{phantomhelp} \url{https://www.phantomhelp.com/logviewer/upload/}
+\bibitem{pydata} \url{https://pandas.pydata.org/}
+\bibitem{repo2} \url{https://github.com/sofia-am/DJI\_Payload\_Development/blob/main/log/post\_flight\_logger\_processor/src/csv\_handler.py}
 
 \end{thebibliography}
 \end{document}
