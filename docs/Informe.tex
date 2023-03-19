@@ -135,11 +135,11 @@ La curva de aprendizaje en dichas tecnologías se documentó en Notion, una plat
 \newpage
 \section{Introducción}
 
-Los drones se han convertido en una herramienta valiosa para diversas aplicaciones, desde la vigilancia y la inspección hasta el mapeo y la entrega de paquetes. El drone 300 RTK es uno de los drones comerciales más avanzados del mercado, capaz de volar en condiciones extremas y de realizar tareas precisas y complejas gracias a su tecnología de posicionamiento y navegación de alta precisión. Sin embargo, la verdadera versatilidad del drone 300 RTK radica en su capacidad de cargar diferentes tipos de cargas útiles, lo que lo convierte en una herramienta aún más poderosa y adaptable a diversas necesidades y requerimientos.
+Los drones se han convertido en una herramienta valiosa para diversas aplicaciones, desde la vigilancia y la inspección hasta el mapeo y la entrega de paquetes. El drone 300 RTK es uno de los más avanzados del mercado civil, capaz de volar en condiciones extremas y de realizar tareas precisas y complejas gracias a su tecnología de posicionamiento y navegación de alta precisión. Sin embargo, su verdadera versatilidad radica en su capacidad de soportar diferentes tipos de \textit{payloads}, lo que lo convierte en una herramienta aún más poderosa y adaptable a diversas necesidades y requerimientos.
 
-Para el desarrollo de estas cargas utiles, se utilizaron placas de desarrollo de la empresa PyCom. Las placas Pycom son un tipo de placa de desarrollo de hardware que están diseñadas específicamente para la creación de proyectos de Internet de las cosas (IoT). Las mismas cuentan con varios componentes integrados, incluyendo un microcontrolador, una antena de radio, un módulo Wi-Fi, Bluetooth y otros sensores, lo que las hace muy versátiles para muchos proyectos de IoT. Además, están diseñadas para ser programadas y controladas con lenguajes de programación populares como Python, lo que facilita la creación de aplicaciones y proyectos para muchos desarrolladores. Consideramos que dichas funcionalidades nos brindan un panorama muy amplio de posibilidades para el desarrollo de las cargas útiles.
+Para la implementación de estas cargas útiles, se utilizaron placas de la empresa PyCom. Estas placas de desarrollo están diseñadas específicamente para la creación de proyectos de Internet de las cosas (IoT). Las mismas cuentan con varios componentes integrados, incluyendo un microcontrolador, una antena de radio, un módulo Wi-Fi, Bluetooth y otros sensores, lo que las hace muy potentes para proyectos de IoT. Además, están diseñadas para ser programadas y controladas con lenguajes de programación populares como Python, lo que facilita la creación de aplicaciones y proyectos para muchos desarrolladores. Consideramos que dichas funcionalidades nos brindan un panorama muy amplio de posibilidades para el desarrollo de las cargas útiles.
 
-Por otro lado, DJI, el fabricante del drone, ofrece un SDK (Software Development Kit) para sus drones Matrice 300 RTK, que permite a los desarrolladores crear aplicaciones personalizadas para controlar y gestionar los drones de manera más eficiente y efectiva. El mismo proporciona una serie de herramientas de desarrollo, como una API (Application Programming Interface) completa, que permite a los desarrolladores interactuar con los componentes del drone, como la cámara, los sensores, los motores y los controladores de vuelo. También proporciona acceso a la información del estado del drone, como la ubicación y la velocidad, lo que permite a los desarrolladores crear aplicaciones de seguimiento y monitoreo. Además, la API permite a los desarrolladores integrar funciones personalizadas, como la planificación de misiones automatizadas, la detección de obstáculos y la captura de datos en tiempo real.
+Por otro lado, DJI, el fabricante del drone, ofrece un SDK (Software Development Kit) para los Matrice 300 RTK, que permite a los desarrolladores crear aplicaciones personalizadas para controlarlos y gestionarlos de manera más eficiente y efectiva. El mismo proporciona una API (Application Programming Interface) completa, que permite a los desarrolladores interactuar con los componentes del drone, como la cámara, los sensores, los motores y los controladores de vuelo. También proporciona acceso a la información del estado del UAV (Unmanned Aerial Vehicle), como la ubicación y la velocidad, lo que nos permite crear aplicaciones de seguimiento y monitoreo. Además, la API permite integrar funciones personalizadas, como la planificación de misiones automatizadas, la detección de obstáculos y la captura de datos en tiempo real.
 
 Nuestro objetivo fue investigar acerca de toda esta tecnología, y realizar una primera aproximación al desarrollo de cargas útiles para el drone con el fin de expandir sus funcionalidades y aplicaciones.
 
@@ -445,10 +445,8 @@ El funcionamiento conceptualmente no es demasiado complejo, se trata de obtener 
 
 \begin{figure}[ht]
   \centering
-  \begin{subfigure}[a]{1\linewidth}
-    \includegraphics[width=\linewidth]{images/post-flight-processor.png}
+    \includegraphics[scale=0.5]{images/post-flight-processor.png}
     \caption{Fig. 5.5.2: PostFlight-Processor}
-  \end{subfigure}
 \end{figure}
 
 \clearpage
