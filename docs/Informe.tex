@@ -109,7 +109,9 @@
 
 \justifying
 \section{Resumen}
- 
+En el siguiente documento usted encontrará información acerca del proto-colo UART para la comunicación entre distintas placas de desarrollo apunta-das para interfaz y payload en el drone \textit{Matrice 300 RTK} del fabricante \textit{DJI}. Además de esto se explicará la importancia e implementación de un logger personalizado para un completo registro de eventos en vuelo y como este puede trabajar en conjunto con un script para realizar un procesado post-flight de la información, y de esta manera sincronizar la misma y facilitando su análisis.
+Otro apartado en este documento es una investigación sobre el \textit{SDK} del drone mencionado con anterioridad y cómo se pueden explotar las funcionalidades del mismo con payloads programables cómo las que nos provee \textit{PyCom} con su placa \textit{FiPy} y \textit{PyTrack}.
+Las payloads abren un gran abanico de posibilidades y aplicaciones de última tecnología para el \textit{UAV} se espera que el lector pueda encontrar de utilidad los snippets de código y los repositorios bases para poder implementarlos en sus proyectos, así como la información e inspiración para desarrollar sus propias payloads para el \textit{Matrice 300 RTK}.
 
 \vspace{1.5cm}
 \begin{tabular}{p{5.5cm}cp{5.5cm}}
@@ -132,7 +134,7 @@ Los drones se han convertido en una herramienta valiosa para diversas aplicacion
 
 Para la implementación de estas cargas útiles, se utilizaron placas de la empresa PyCom. Estas placas de desarrollo están diseñadas específicamente para la creación de proyectos de Internet de las cosas (IoT). Las mismas cuentan con varios componentes integrados, incluyendo un microcontrolador, una antena de radio, un módulo Wi-Fi, Bluetooth y otros sensores, lo que las hace muy potentes para proyectos de IoT. Además, están diseñadas para ser programadas y controladas con lenguajes de programación populares como Python, lo que facilita la creación de aplicaciones y proyectos para muchos desarrolladores. Consideramos que dichas funcionalidades nos brindan un panorama muy amplio de posibilidades para el desarrollo de las cargas útiles.
 
-Por otro lado, DJI, el fabricante del drone, ofrece un SDK (Software Development Kit) para los Matrice 300 RTK, que permite a los desarrolladores crear aplicaciones personalizadas para controlarlos y gestionarlos de manera más eficiente y efectiva. El mismo proporciona una API (Application Programming Interface) completa, que permite a los desarrolladores interactuar con los componentes del drone, como la cámara, los sensores, los motores y los controladores de vuelo. También proporciona acceso a la información del estado del UAV (Unmanned Aerial Vehicle), como la ubicación y la velocidad, lo que nos permite crear aplicaciones de seguimiento y monitoreo. Además, la API permite integrar funciones personalizadas, como la planificación de misiones automatizadas, la detección de obstáculos y la captura de datos en tiempo real.
+El fabricante ofrece un SDK (Software Development Kit) para los drones, que permite a los desarrolladores crear aplicaciones personalizadas para con-trolarlos y gestionarlos de manera más eficiente y efectiva. El mismo propor-ciona una API (Application Programming Interface) completa, que permite a los desarrolladores interactuar con los componentes del drone, como la cámara, los sensores, los motores y los controladores de vuelo. También el acceso a la información del estado del UAV (Unmanned Aerial Vehicle), como la ubicación y la velocidad, lo que nos permite crear aplicaciones de seguimiento y monitoreo. Además, la API permite integrar funciones personalizadas, como la planificación de misiones automatizadas, la detección de obstáculos y la captura de datos en tiempo real.
 
 Nuestro objetivo fue investigar acerca de toda esta tecnología, y realizar una primera aproximación al desarrollo de cargas útiles para el drone con el fin de expandir sus funcionalidades y aplicaciones.
 
@@ -141,7 +143,7 @@ Nuestro objetivo fue investigar acerca de toda esta tecnología, y realizar una 
 \justifying
 Para realizar las experiencias, que se describirán posteriormente en este documento, fueron necesarias algunas placas de desarrollo, las mismas se listarán en esta sección.
 \subsection{PyCom}
-Por un lado se utilizó hardware del fabricante \textit{PyCom}, en particular, los módulos \textit{FiPy}[Fig. 4.1 y Fig. 4.2] y su placa de expansión \textit{FyPy}[Fig. 4.3 y Fig 4.4]. La utilización de estas placas fue debido a que se proyecta que las futuras payloads que lleve el drone sean estas o similares.
+Por un lado se utilizó hardware del fabricante \textit{PyCom}, en particular, los módulos \textit{FiPy}[Fig. 4.1 y Fig. 4.2] y su placa de expansión \textit{FyPy}[Fig. 4.3 y Fig 4.4]. La utilización de las mismas fue debido a que se proyecta que las futuras payloads que lleve el drone sean estas o similares.
 
 \begin{figure}[ht]
   \centering
@@ -236,16 +238,16 @@ Luego de investigaciones vimos que esto es justo lo que se precisaba, ya que nos
 Mientras se analizaban las distintas alternativas para interactuar entre el \textit{SDK del drone} y la payload se hicieron pruebas para que sea una placa \textit{SMT32} la que se conecte directamente al \textit{Matrice 300 RTK} mientras que sea la \textit{PyCom} la que se encargue de  realizar el trabajo útil. Para que esto funcione necesitabamos definir un protocolo de comunicación entre ambas placas, por lo que se optió por utilizar \textit{UART} como medio de transmisión de datos.
 
 \subsubsection{Protocolo UART}
-UART significa universal asynchronous receiver/transmitter y define un protocolo, o una serie de reglas, para intercambiar datos de manera serial entre dos dispositivos. Este protocolo es muy simple y utiliza solamente dos cables entre el transmisor y el receptor para enviar y recibir en ambas direcciones. Ambos terminales deben tener una conexión a tierra. 
+UART significa universal asynchronous receiver/transmitter y define un protocolo, o una serie de reglas, para intercambiar datos de manera serial entre dos dispositivos. Este protocolo es muy simple y utiliza solamente dos cables entre el transmisor y el receptor para enviar y recibir en ambas direcciones. Ambos terminales deben tener una conexión a tierra.
 
-Una de las grandes ventajas del UART es que es asíncrono: el transmisor y el receptor no comparten una señal de reloj común. Aunque esto simplifica enormemente el protocolo, pone ciertos requisitos al transmisor y al receptor. Dado que no comparten un reloj, ambos terminales deben transmitir a la misma velocidad preestablecida para que tengan la misma sincronización de bits. Las velocidades de baudios del UART más comunes que se utilizan en estos días son 4800, 9600, 19.2K, 57.6K y 115.2K, en nuestro caso se usó 9600. Además de tener la misma velocidad en baudios, ambos lados de una conexión UART también deben utilizar los mismos parámetros y estructura de trama. \cite{uart}
+Una de las grandes ventajas del UART es que es asíncrono: el transmisor y el receptor no comparten una señal de reloj común. Aunque esto simplifica enormemente el protocolo, impone ciertos requisitos. Dado que no tienen un clock en común, ambos terminales deben transmitir a la misma velocidad preestablecida para que tengan una correcta sincronización de bits. Las velo-cidades de baudios del UART más comunes que se utilizan en estos días son 4800, 9600, 19.2K, 57.6K y 115.2K, en nuestro caso se usó 9600. Además de tener el mismo baudrate, ambos lados de una conexión UART también deben utilizar los mismos parámetros y estructura de trama. \cite{uart}
 
-La comunicación UART puede ser simplex(los datos son enviados solo en una dirección), half-duplex(los datos pueden ser enviados en ambas direcciones pero no al mismo tiempo) o full-duplex(los datos pueden ser enviados en ambas direcciones al mismo tiempo).
+La conexión puede ser simplex(se envía solo en una dirección), half-duplex(los datos pueden ser enviados en ambas direcciones pero no al mismo tiempo) o full-duplex(los datos pueden ser enviados en ambas direcciones al mismo tiempo).
 
 \subsubsection{Programacion del modulo UART de la SMT32F4}
-Para poder utilizar el modulo UART de la \textit{SMT32F4} es necesario realizar una configuración previa. Se utilizó la librería \texttt{UART HAL} que nos brinda el fabricante de la placa. 
+Para poder utilizar el modulo UART de la \textit{SMT32F4} es necesario realizar una configuración previa. Se utilizó la librería \texttt{UART HAL} que nos brinda el fabricante de la placa.
 
-El modulo nos permite realizar la comunicación de manera asíncrona o síncrona. En nuestro caso se optó por hacerlo de manera asíncrona. Además, se utilizó el método de polling, o bloqueante, para evitar el uso de interrupciones. 
+El módulo nos permite realizar la comunicación de manera asíncrona o síncrona. En nuestro caso se optó por hacerlo de manera asíncrona. Además, se utilizó el método de polling, o bloqueante, para evitar el uso de interrupcio-nes.
 
 La librería \texttt{UART HAL} posee una estructura llamada \texttt{UART\_InitTypeDef} que inicializa los parámetros del módulo.
 
@@ -269,10 +271,10 @@ La librería \texttt{UART HAL} posee una estructura llamada \texttt{UART\_InitTy
 
 \end{lstlisting}
 
-Otra estructura importante que se usó para configurar el modulo es la \texttt{UART\_HandleTypeDef} que se encarga de configurar otros parámetros como los códigos de error, los puteros a los buffers de datos, el tamaño de los mismos, etc.
+Otra estructura importante que se usó para configurar el modulo es la \texttt{UART\_HandleTypeDef} que se encarga de configurar otros parámetros como los códigos de error, los punteros a los buffers de datos, el tamaño de los mismos, etc.
 
 
-Para inicializar el modulo se debe llamar a la función \texttt{HAL\_UART\_Init} y pasarle como parámetro la estructura \texttt{UART\_HandleTypeDef}. 
+Es necesario llamar a la función \texttt{HAL\_UART\_Init} y pasarle como parámetro la estructura \texttt{UART\_HandleTypeDef}.
 \\\\
 \lstinline|HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)|
 \\\\
@@ -280,8 +282,8 @@ Para la transmisión se utiliza la función transmit:
 \\\\
 \lstinline|HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)|
 \\\\
-Donde el primer parámetro es un puntero a una estructura \texttt{UART\_HandleTypeDef} que contiene información sobre la configuración del módulo, el segundo parámetro es un puntero a un buffer de datos que se desea transmitir, el tercer parámetro es la cantidad de datos (u8 o u16) a transmitir y el cuarto parámetro es el tiempo de espera para reintentar el envio. Esta función retorna un valor de tipo \texttt{HAL\_StatusTypeDef} que es un enum que contiene el estado( \texttt{HAL\_OK, HAL\_ERROR, HAL\_BUSY o HAL\_TIMEOUT}).
-
+Dónde el primer parámetro es un puntero a una estructura \texttt{UART\_HandleTypeDef} que contiene información sobre la configuración del módulo, el segundo parámetro es un puntero a un buffer de datos que se desea transmitir, el tercer parámetro es la cantidad de datos (u8 o u16) a transmitir y el cuarto parámetro es el tiempo de espera para reintentar el envio. Esta función retorna un valor de tipo \texttt{HAL\_StatusTypeDef} que es un enum que contiene el estado( \texttt{HAL\_OK, HAL\_ERROR, HAL\_BUSY o HAL\_TIMEOUT}).
+\\\\
 Para la recepción se utiliza la función receive:
 \\\\
 \lstinline|HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)|
@@ -328,13 +330,13 @@ Para leer se utiliza
 
 Con esto listo, solo resta cargar los programas de prueba en ambas placas, los cuales se pueden encontrar en el repositorio
 \begin{itemize}
-\item \path{../uart/PyCom/write_data_to_smt32.py} para enviar datos desde la \textit{PyCom} a la \textit{SMT32}.
-\item \path{../uart/SMT32F4/uart_recieve/src} ahí se encuentran los archivos a compilar para la \textit{SMT32}, se recomienda abrir todo el workspace y compilar desde la herramienta.
+  \item \path{../uart/PyCom/write_data_to_smt32.py} para enviar datos desde la \textit{PyCom} a la \textit{SMT32}.
+  \item \path{../uart/SMT32F4/uart_recieve/src} ahí se encuentran los archivos a compilar para la \textit{SMT32}, se recomienda abrir todo el workspace y compilar desde la herramienta.
 \end{itemize}
 
 \subsubsection{Conexionado}
 
-Por último solo queda realizar el conexionado para obtener la siguiente topología, en la cúal la \textit{PyCom} enviará datos a ser leídos por la \textit{SMT32}. 
+Por último solo queda realizar el conexionado para obtener la siguiente topología, en la cúal la \textit{PyCom} enviará datos a ser leídos por la \textit{SMT32}.
 
 \begin{enumerate}
   \item PC1 a STM32 [Fig. 5.1.3].
@@ -346,22 +348,22 @@ Entonces solo queda, desde la \textit{PC1}, enviar información a la \textit{STM
 
 \begin{figure}[ht]
   \centering
-  \begin{subfigure}[b]{0.45\linewidth}
+  \begin{subfigure}[b]{0.35\linewidth}
     \includegraphics[width=\linewidth]{images/SMT32-PyCom-1.png}
-    \caption{Fig. 5.1.3: PC1 a STM32}
+    \caption{Fig. 5.1.3: PC1-STM32}
   \end{subfigure}
-  \begin{subfigure}[b]{0.45\linewidth}
+  \begin{subfigure}[b]{0.4\linewidth}
     \includegraphics[width=\linewidth]{images/SMT32-PyCom-2.png}
-    \caption{Fig. 5.1.4: STM32 a Pycom}
+    \caption{Fig. 5.1.4: STM32-Pycom}
   \end{subfigure}
-  \begin{subfigure}[c]{0.45\linewidth}
+  \begin{subfigure}[c]{0.35\linewidth}
     \includegraphics[width=\linewidth]{images/SMT32-PyCom-3.png}
-    \caption{Fig. 5.1.5: Pycom a PC2}
+    \caption{Fig. 5.1.5: Pycom-PC2}
   \end{subfigure}
 \end{figure}
 \FloatBarrier
 \subsection{DJI SDK}
-La investigación sobre el \textit{SDK} del drone nace como respuesta a la oportunidad de montar payloads sobre \textit{UAV}. Tener cargas útiles sobre el drone es de una gran útilidad dado que utilizando \href{https://www.dji.com/d-rtk-2}{\textit{D-RTK2}} \cite{rtk} se pueden obtener datos de alta precisión a través del GPS del mismo, en tiempo real.
+La investigación sobre el \textit{SDK} del drone nace como respuesta a la oportu-nidad de montar payloads sobre \textit{UAV}. Tener cargas útiles sobre el drone es de una gran útilidad dado que utilizando \href{https://www.dji.com/d-rtk-2}{\textit{D-RTK2}} \cite{rtk} se pueden obtener datos de alta precisión a través del GPS del mismo, en tiempo real.
 
 Algunas de las aplicaciones que podrían resultar de estas implementacio-nes son:
 \begin{itemize}
@@ -377,22 +379,22 @@ Algunas de las aplicaciones que podrían resultar de estas implementacio-nes son
 Ahora se adjuntarán los distintos módulos que existen el el SDK de payloads provisto por DJI, estos son los que abrirán las puertas a nuevas aplicaciones, los mismos se clasifican en dos grandes subsecciones, \textit{Basic Function} o \textit{Advanced Function}.
 
 \begin{figure}
-\centering
+  \centering
   \includegraphics[width=\linewidth]{images/basic_function.png}
   \caption{Fig. 5.2.1: Basic Functions}
 \end{figure}
 \begin{figure}
-\centering
-\includegraphics[width=\linewidth]{images/advanced_function.png}
+  \centering
+  \includegraphics[width=\linewidth]{images/advanced_function.png}
   \caption{Fig. 5.2.1: Advanced Functions}
 \end{figure}
 
 \FloatBarrier
 \subsection{PyCom-CustomLogger}
-Dado que el logger proporcionado por la librería de micropython es bastante limitado surgió la necesidad de implementar un logger genérico que nos permita visualizar la información obtenida por el drone de la mejor manera posible. Esto no es algo menor, ya que varias de las potenciales aplicaciones que tine nuestro \textit{UAV} consiste en la obtención y relevamiento de datos.
+Dado que el logger proporcionado por la librería de micropython es bas-tante limitado surgió la necesidad de implementar uno genérico que nos permita visualizar la información obtenida por el drone de la mejor manera posible. Esto no es algo menor, ya que varias de las potenciales aplicaciones que tiene nuestro \textit{UAV} consiste en la obtención y relevamiento de datos.
 
 \subsubsection{Conexión a internet y servidor NTP}
-Para la construcción del \textit{CustomLogger} lo primero que debimos implementar fue un módulo para el soporte del protocolo \href{https://es.wikipedia.org/wiki/Network_Time_Protocol}{\textit{NTP}} \cite{ntp} ya que es fundamental tener la hora en la que suceden los eventos que se quieren registrar. Para lo cual se creo un \href{https://github.com/sofia-am/DJI_Payload_Development/blob/main/log/micropython/lib/us_ntp.py}{módulo en python} \cite{repo} que primero se conecta a internet, para luego poder sincronizarse utilizando el servidor \textit{NTP} de google.
+Para la construcción del \textit{CustomLogger} lo primero que debimos imple-mentar fue un módulo para el soporte del protocolo \href{https://es.wikipedia.org/wiki/Network_Time_Protocol}{\textit{NTP}} \cite{ntp} ya que es fundamental tener la hora en la que suceden los eventos que se quieren registrar. Para lo cual se creo un \href{https://github.com/sofia-am/DJI_Payload_Development/blob/main/log/micropython/lib/us_ntp.py}{módulo en python} \cite{repo} que primero se conecta a internet, para luego poder sincronizarse utilizando el servidor \textit{NTP} de google.
 
 \subsection{Logger}
 Para realizar el logger nos basamos principalmente en el módulo que ya existía para micropython, luego le fuimos realizando las modificaciones pertinentes, de esta manera cada vez que se quiere registrar un evento se debe llamar a la función \textit{log} de la siguiente manera: \textbf{Logger.info("Mensaje a registrar")}, los tipos de logs soportados son:
@@ -404,21 +406,21 @@ Para realizar el logger nos basamos principalmente en el módulo que ya existía
   \item critical (color rojo)
   \item exception (color rojo)
 \end{itemize}
-El log es circular, con un tamaño máximo por defecto de 1Gb (parametrizable), es decir, a partir del Gb de información comienza a sobreescribirse.
+El log es circular, con un tamaño máximo por defecto de 1Gb (parametri-zable), es decir, a partir del Gb de información comienza a sobreescribirse.
 
 \begin{figure}
   \begin{center}
-      \includegraphics[scale=0.5]{images/PyCom-Logger.png}
-      \caption{Fig. 5.4.1: CustomLogger}
-  \end{center}  
+    \includegraphics[scale=0.5]{images/PyCom-Logger.png}
+    \caption{Fig. 5.4.1: CustomLogger}
+  \end{center}
 \end{figure}
 
 \subsection{Post-Flight Processor}
 Mientras se esperaba por la llegada de nuevos componentes, se decidió realizar una prueba de concepto para la implementación de un \textit{Post-Flight Processor}, un script que permita mergear los datos obtenidos (post vuelo) por el drone, con los que se obtengan de los sensores externos de nuestra payload.
 
 \subsubsection{DJI Logs}
-Los logs post vuelo de DJI vienen encriptados, por lo que lo primero que se debe hacer es desencriptarlos, para esto se utiliza \href{https://www.phantomhelp.com/logviewer/upload/}{\textit{PhantomHelpLogViewer}} \cite{phantomhelp}, simplemente se siguen los pasos para subir el archivo obtenido del comando del drone, y una vez procesado descargar el \textit{.csv} obtenido.
-De este archivo la información que nos interesaría obtener a priori es 
+Los logs post vuelo de DJI vienen encriptados, por lo que lo primero que se debe hacer es desencriptarlos, para esto se utiliza \href{https://www.phantomhelp.com/logviewer/upload/}{\textit{PhantomHelpLogViewer}} \cite{phantomhelp}, simplemente se siguen los pasos para subir el archivo obtenido del comando del drone, y una vez procesado descargar el \textit{.csv}.
+De este archivo la información que nos interesaría obtener a priori es
 \begin{itemize}
   \item Date
   \item Lat
@@ -426,10 +428,11 @@ De este archivo la información que nos interesaría obtener a priori es
   \item Height
   \item Altitude
 \end{itemize}
-
+\newpage
 \subsubsection{CSV Handler}
 El primer paso para trabajar con los logs obtenidos del drone fue crear un handler, que nos permita leer el archivo \textit{.csv}, obtener los datos de interés, con ellos crear un \textit{DataFrame} apoyandonos con \href{https://pandas.pydata.org/}{\textit{Pandas}} \cite{pydata}.
-Dadas las particularidades de como se guardan las fechas en los logs, y la necesidad de que sean idénticas a las que obtenemos con nuestro \textit{CustomLogger} en la \textit{PyCom}, se necesitaron múltiples funciones auxiliares para el manejo de strings, la mayoría se resuelve con programación funcional (lambdas, maps, etc), además se implementaron test unitarios para asegurarnos del correcto funcionamiento de las mismas.
+\newline
+Por como se guardan las fechas en los logs, y la necesidad de que sean idénticas a las que obtenemos con nuestro \textit{CustomLogger} en la \textit{PyCom}, se necesitaron múltiples funciones auxiliares para el manejo de strings, la mayoría se resuelve con programación funcional (lambdas, maps, etc), además se implementaron test unitarios para asegurarnos del correcto funcionamiento de las mismas.
 
 Se puede consultar el código para este módulo en \href{https://github.com/sofia-am/DJI\_Payload\_Development/blob/main/log/post\_flight\_logger\_processor/src/csv\_handler.py}{\textit{csv\_handler.py}} \cite{repo2}.
 
@@ -438,32 +441,38 @@ El funcionamiento conceptualmente no es demasiado complejo, se trata de obtener 
 
 \begin{figure}[ht]
   \centering
-    \includegraphics[scale=0.5]{images/post-flight-processor.png}
-    \caption{Fig. 5.5.2: PostFlight-Processor}
+  \includegraphics[scale=0.4]{images/post-flight-processor.png}
+  \caption{Fig. 5.5.2: PostFlight-Processor}
 \end{figure}
 
 \section{Conclusión}
-Nuestra experiencia en el Laboratorio de Comunicaciones Digitales dio lugar a abordar desafíos reales y adquirir habilidades relacionadas al trabajo en equipo, la comunicación y la organización. Pudimos aplicar los conocimientos adquiridos en la carrera de Ingeniería en Computación en un proyecto real, lo que fue muy enriquecedor y nos permitió ver cómo éstos se aplican en la práctica. Tuvimos la oportunidad de trabajar con herramientas y tecnologías nuevas, en un espacio de trabajo colaborativo y multidisciplinario, logrando así aprender de otras áreas y de otras personas.
+Nuestra experiencia en el Laboratorio de Comunicaciones Digitales dio lugar a abordar desafíos reales y adquirir habilidades relacionadas al trabajo en equipo, la comunicación y la organización. Pudimos aplicar los conocimien-tos adquiridos en la carrera de Ingeniería en Computación en un proyecto real, lo que fue muy enriquecedor y nos permitió ver cómo éstos se aplican en la práctica. Tuvimos la oportunidad de trabajar con herramientas y tecnologías nuevas, en un espacio de trabajo colaborativo y multidisciplinario, logrando así aprender de otras áreas y de otras personas.
 
-Al trabajar en equipo para resolver los desafíos que se presentaban, mejoramos nuestra capacidad para comunicarnos y colaborar de manera efectiva. Además, tuvimos que organizar nuestro tiempo y nuestras tareas de manera eficiente, lo que nos posibilitó adquirir habilidades importantes de gestión del tiempo y planificación.
+Se pudo explorar un protocolo de comunicación muy utilizado en la prác-tica como es el UART para el intercambio de información entre dispositivos. Además se pudo implementar un CustomLogger y un procesador de datos post vuelo el cual se espera que pueda facilitar el análisis de los mismos.
 
-En definitiva, la Práctica Supervisada en el Laboratorio de Comunicaciones Digitales fue una experiencia valiosa que nos permitió crecer tanto a nivel personal como profesional. Adquirimos habilidades importantes para el trabajo en equipo, la comunicación y la organización, y tuvimos la oportunidad de aplicar nuestros conocimientos en un proyecto real, lo que nos preparó para futuros desafíos en nuestra carrera.
+Se investigo, analizó y documentó en gran medida el SDK del drone, con lo que se espera facilitar el trabajo de futuros desarrolladores que quieran trabajar con el mismo, así como también se espera que el código desarrollado pueda ser utilizado como base para futuros proyectos y en conjunto permita tomar decisiones en cuanto a las potenciales aplicaciones del \textit{Matrice 300 RTK} y las payloads que serían óptimas para el mismo.
+
+Un apartado importante fue también el entender la importancia de la investigación previa a un proyecto de gran envergadura, en la práctica no se debería enfrentar uno sin tener un panorama de viabilidad técnica, tiempo y recursos estimados, ya que estos son limitados y un ingeniero deber saber como utilizarlos de manera eficiente, no es menor el hecho de que en la industria se trabaja con deadlines y presupuestos, por lo que es de vital importancia tener en cuenta estos factores.
+
+Al trabajar en equipo para resolver los desafíos que se presentaban, mejo-ramos nuestra capacidad para comunicarnos y colaborar de manera efectiva. Además, tuvimos que organizar nuestro tiempo y nuestras tareas de manera eficiente, lo que nos posibilitó adquirir habilidades importantes de gestión del tiempo y planificación.
+
+En definitiva, la Práctica Supervisada en el Laboratorio de Comunicacio-nes Digitales fue una experiencia valiosa que nos permitió crecer tanto a nivel personal como profesional. Adquirimos habilidades importantes para el tra-bajo en equipo, la comunicación y la organización, y tuvimos la oportunidad de aplicar nuestros conocimientos en un proyecto real, lo que nos preparó para futuros desafíos en nuestra carrera.
 
 \clearpage
 \addcontentsline{toc}{section}{Referencias}
 \begin{thebibliography}{9}
-\bibitem{fipy} \url{https://docs.pycom.io/gitbook/assets/specsheets/Pycom_002_Specsheets_FiPy_v2.pdf}
-\bibitem{pytrack} \url{https://pycom.io/product/pytrack-2-0-x/} 
-\bibitem{micropython} \url{https://github.com/micropython/micropython}
-\bibitem{smt} \url{https://drive.google.com/file/d/182H9i1qmJ2UCbynztxymEA3nfmx_eGrk/view?usp=share_link}
-\bibitem{djiexp} \url{https://developer.dji.com/es/flight-controller/advanced-flight-control/mission-protocol.html}
-\bibitem{uart} \url{https://www.rohde-schwarz.com/lat/productos/prueba-y-medicion/essentials-test-equipment/digital-oscilloscopes/entendiendo-el-uart_254524.html} 
-\bibitem{rtk} \url{https://www.dji.com/d-rtk-2}
-\bibitem{ntp} \url{https://es.wikipedia.org/wiki/Network_Time_Protocol}
-\bibitem{repo} \url{https://github.com/sofia-am/DJI_Payload_Development/blob/main/log/micropython/lib/us_ntp.py}
-\bibitem{phantomhelp} \url{https://www.phantomhelp.com/logviewer/upload/}
-\bibitem{pydata} \url{https://pandas.pydata.org/}
-\bibitem{repo2} \url{https://github.com/sofia-am/DJI\_Payload\_Development/blob/main/log/post\_flight\_logger\_processor/src/csv\_handler.py}
+  \bibitem{fipy} \url{https://docs.pycom.io/gitbook/assets/specsheets/Pycom_002_Specsheets_FiPy_v2.pdf}
+  \bibitem{pytrack} \url{https://pycom.io/product/pytrack-2-0-x/}
+  \bibitem{micropython} \url{https://github.com/micropython/micropython}
+  \bibitem{smt} \url{https://drive.google.com/file/d/182H9i1qmJ2UCbynztxymEA3nfmx_eGrk/view?usp=share_link}
+  \bibitem{djiexp} \url{https://developer.dji.com/es/flight-controller/advanced-flight-control/mission-protocol.html}
+  \bibitem{uart} \url{https://www.rohde-schwarz.com/lat/productos/prueba-y-medicion/essentials-test-equipment/digital-oscilloscopes/entendiendo-el-uart_254524.html}
+  \bibitem{rtk} \url{https://www.dji.com/d-rtk-2}
+  \bibitem{ntp} \url{https://es.wikipedia.org/wiki/Network_Time_Protocol}
+  \bibitem{repo} \url{https://github.com/sofia-am/DJI_Payload_Development/blob/main/log/micropython/lib/us_ntp.py}
+  \bibitem{phantomhelp} \url{https://www.phantomhelp.com/logviewer/upload/}
+  \bibitem{pydata} \url{https://pandas.pydata.org/}
+  \bibitem{repo2} \url{https://github.com/sofia-am/DJI\_Payload\_Development/blob/main/log/post\_flight\_logger\_processor/src/csv\_handler.py}
 
 \end{thebibliography}
 \end{document}
